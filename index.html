@@ -14,11 +14,11 @@
   <header>
     <div class="balon" aria-hidden="true">⚽</div>
     <h1>Pachanga</h1>
-    <p>Apunta a los jugadores, ponles nivel y reparte equipos equilibrados.</p>
+    <p>Apunta a los jugadores, reparte equipos equilibrados y organiza el partido.</p>
   </header>
 
   <main>
-    <!-- Bloque 1: añadir jugadores -->
+    <!-- ===== Bloque 1: añadir jugadores ===== -->
     <section class="tarjeta">
       <h2><span class="numero">1</span> Jugadores</h2>
 
@@ -41,22 +41,23 @@
       <p id="contador" class="pista"></p>
     </section>
 
-    <!-- Bloque 2: hacer los equipos -->
+    <!-- ===== Bloque 2: hacer los equipos ===== -->
     <section class="tarjeta">
       <h2><span class="numero">2</span> Equipos</h2>
 
-      <!-- Nombres de los equipos: se pueden cambiar escribiendo -->
+      <!-- Nombre y color de cada equipo: se pueden cambiar -->
       <div class="nombres-equipos">
-        <label class="nombre-equipo equipo-1">
-          <span class="peto"></span>
+        <div class="nombre-equipo">
+          <input id="color-equipo-1" type="color" class="selector-color" value="#ff8c1a" aria-label="Color del equipo 1" title="Cambiar color">
           <input id="nombre-equipo-1" type="text" maxlength="20" aria-label="Nombre del equipo 1">
-        </label>
+        </div>
         <span class="vs">VS</span>
-        <label class="nombre-equipo equipo-2">
-          <span class="peto"></span>
+        <div class="nombre-equipo">
+          <input id="color-equipo-2" type="color" class="selector-color" value="#2b7bf3" aria-label="Color del equipo 2" title="Cambiar color">
           <input id="nombre-equipo-2" type="text" maxlength="20" aria-label="Nombre del equipo 2">
-        </label>
+        </div>
       </div>
+      <p class="pista">Pulsa el círculo de color para cambiar el color del peto.</p>
 
       <button id="boton-repartir" class="boton principal">Hacer equipos</button>
 
@@ -64,12 +65,12 @@
       <div id="resultado" hidden>
         <div class="marcador">
           <div class="lado izquierda">
-            <span class="nombre" id="marcador-nombre-1"></span>
+            <span class="nombre equipo-1" id="marcador-nombre-1"></span>
             <span class="total" id="marcador-total-1"></span>
           </div>
           <span class="vs">VS</span>
           <div class="lado derecha">
-            <span class="nombre" id="marcador-nombre-2"></span>
+            <span class="nombre equipo-2" id="marcador-nombre-2"></span>
             <span class="total" id="marcador-total-2"></span>
           </div>
         </div>
@@ -89,9 +90,76 @@
             <div class="mitad equipo-1" id="mitad-1"></div>
           </div>
         </div>
-
-        <button id="boton-copiar" class="boton secundario">📋 Copiar para WhatsApp</button>
       </div>
+    </section>
+
+    <!-- ===== Bloque 3: cuándo y dónde ===== -->
+    <section class="tarjeta">
+      <h2><span class="numero">3</span> Partido</h2>
+
+      <div class="campos">
+        <label class="campo-form">
+          <span>📅 Día y hora</span>
+          <input id="fecha" type="datetime-local">
+        </label>
+        <label class="campo-form">
+          <span>📍 Lugar</span>
+          <input id="lugar" type="text" maxlength="80" placeholder="Ej.: Polideportivo Municipal, pista 2">
+        </label>
+      </div>
+      <p class="pista">Al compartir, el lugar irá con un enlace a Google Maps.</p>
+    </section>
+
+    <!-- ===== Bloque 4: pago del campo ===== -->
+    <section class="tarjeta">
+      <h2><span class="numero">4</span> Pago del campo</h2>
+
+      <div class="campos">
+        <label class="campo-form">
+          <span>💶 Precio del campo (€)</span>
+          <input id="precio" type="text" inputmode="decimal" placeholder="Ej.: 60" maxlength="8">
+        </label>
+
+        <div class="campo-form">
+          <span>¿Quién paga?</span>
+          <div class="interruptor" role="radiogroup" aria-label="Quién paga el campo">
+            <label><input type="radio" name="modo-pago" value="todos" checked><span>Todos a partes iguales</span></label>
+            <label><input type="radio" name="modo-pago" value="pierde"><span>El equipo que pierde</span></label>
+          </div>
+        </div>
+
+        <!-- Solo se ve si paga el que pierde -->
+        <label class="campo-form" id="bloque-perdedor" hidden>
+          <span>¿Quién ha perdido?</span>
+          <select id="perdedor">
+            <option value="">Todavía no se ha jugado</option>
+            <option value="1">Equipo 1</option>
+            <option value="2">Equipo 2</option>
+            <option value="empate">Empate (pagan todos)</option>
+          </select>
+        </label>
+
+        <label class="campo-form">
+          <span>🙋 Ha pagado el campo</span>
+          <input id="pagador" type="text" maxlength="20" placeholder="Nombre de quien lo ha pagado" list="nombres-jugadores" autocomplete="off">
+          <datalist id="nombres-jugadores"></datalist>
+        </label>
+
+        <label class="campo-form">
+          <span>📲 Bizum / teléfono para mandarle el dinero (opcional)</span>
+          <input id="bizum" type="text" maxlength="30" placeholder="Ej.: Bizum al 600 000 000">
+        </label>
+      </div>
+
+      <div id="resumen-pago" class="resumen-pago"></div>
+    </section>
+
+    <!-- ===== Bloque 5: compartir ===== -->
+    <section class="tarjeta">
+      <h2><span class="numero">5</span> Compartir</h2>
+      <p class="pista">Manda los equipos, la hora, el lugar y lo que paga cada uno.</p>
+      <button id="boton-whatsapp" class="boton principal whatsapp">💬 Enviar por WhatsApp</button>
+      <button id="boton-copiar" class="boton secundario">📋 Copiar texto</button>
     </section>
   </main>
 
