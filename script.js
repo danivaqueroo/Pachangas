@@ -168,7 +168,7 @@ inputsColor.forEach(function (input, i) {
     input.addEventListener(tipoEvento, function () {
       coloresEquipos[i] = input.value;
       guardar("pachanga-colores", coloresEquipos);
-      aplicarColores(); // cambia petos, marcador, casillas y fichas del campo
+      aplicarColores(); // cambia camisetas, marcador, casillas y fichas del campo
       pintarPago();     // y el circulito de color del mensaje de WhatsApp
     });
   }

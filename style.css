@@ -10,9 +10,9 @@
   --texto: #15241a;
   --texto-suave: #5b6b60;
   --borde: #dbe7de;
-  --equipo-1: #ff8c1a;       /* peto naranja (se cambia desde la web) */
-  --equipo-2: #2b7bf3;       /* peto azul (se cambia desde la web) */
-  --texto-equipo-1: #ffffff; /* color de letra sobre el peto (lo calcula el JS) */
+  --equipo-1: #ff8c1a;       /* camiseta naranja (se cambia desde la web) */
+  --equipo-2: #2b7bf3;       /* camiseta azul (se cambia desde la web) */
+  --texto-equipo-1: #ffffff; /* color de letra sobre la camiseta (lo calcula el JS) */
   --texto-equipo-2: #ffffff;
   --whatsapp: #25d366;
   --whatsapp-oscuro: #128c4a;
@@ -287,7 +287,7 @@ select:focus {
   color: var(--texto-suave);
 }
 
-/* Selector de color redondo (el "peto") */
+/* Selector de color redondo (la "camiseta") */
 .selector-color {
   flex: none;
   width: 38px;
@@ -336,12 +336,15 @@ select:focus {
   min-width: 0;
 }
 
-.marcador .lado.derecha {
-  text-align: right;
+/* La pastilla de color ocupa solo lo que mide el nombre:
+   el equipo 1 se pega a la izquierda y el equipo 2 a la derecha */
+.marcador .lado.izquierda {
+  align-items: flex-start;
 }
 
 .marcador .lado.derecha {
   align-items: flex-end;
+  text-align: right;
 }
 
 /* Nombre del equipo dentro de una "pastilla" de su color */
