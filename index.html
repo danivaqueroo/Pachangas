@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <!-- La "cabeza" de la página: información que no se ve, pero que el navegador necesita -->
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Pachanga: generador de equipos</title>
+  <!-- Aquí conectamos el archivo de estilos (colores, tamaños, etc.) -->
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <!-- El "cuerpo": todo lo que se ve en pantalla -->
+
+  <header>
+    <h1>⚽ Pachanga</h1>
+    <p>Apunta a los jugadores, ponles nivel y reparte equipos equilibrados.</p>
+  </header>
+
+  <main>
+    <!-- Bloque 1: añadir jugadores -->
+    <section class="tarjeta">
+      <h2>1. Jugadores</h2>
+
+      <form id="form-jugador">
+        <input id="nombre" type="text" placeholder="Nombre del jugador" required maxlength="20" autocomplete="off">
+        <select id="nivel" aria-label="Nivel del jugador">
+          <option value="1">⭐ 1</option>
+          <option value="2">⭐ 2</option>
+          <option value="3" selected>⭐ 3</option>
+          <option value="4">⭐ 4</option>
+          <option value="5">⭐ 5</option>
+        </select>
+        <button type="submit">Añadir</button>
+      </form>
+
+      <ul id="lista-jugadores"></ul>
+      <p id="contador" class="pista"></p>
+    </section>
+
+    <!-- Bloque 2: hacer los equipos -->
+    <section class="tarjeta">
+      <h2>2. Equipos</h2>
+      <button id="boton-repartir" class="principal">Hacer equipos</button>
+      <div id="equipos" class="equipos"></div>
+      <button id="boton-copiar" class="secundario" hidden>📋 Copiar para WhatsApp</button>
+    </section>
+  </main>
+
+  <!-- Aquí conectamos el archivo con la lógica (lo que hace cosas) -->
+  <script src="script.js"></script>
+</body>
+</html>

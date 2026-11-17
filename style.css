@@ -1,0 +1,192 @@
+/* ===== COLORES =====
+   Los guardamos con nombre para poder cambiarlos todos desde aquí. */
+:root {
+  --cesped: #c8102e;
+  --cesped-oscuro: #8e0b20;
+  --fondo: #eef5ef;
+  --tarjeta: #ffffff;
+  --texto: #1b2a1f;
+  --texto-suave: #5b6b60;
+  --borde: #d5e3d8;
+  --equipo-a: #f4f4f4;
+  --equipo-b: #26302a;
+}
+
+/* ===== BASE ===== */
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  font-family: system-ui, -apple-system, "Segoe UI", sans-serif;
+  background: var(--fondo);
+  color: var(--texto);
+}
+
+header {
+  background: var(--cesped);
+  color: white;
+  text-align: center;
+  padding: 28px 16px;
+}
+
+header h1 {
+  margin: 0 0 6px;
+  font-size: 2rem;
+}
+
+header p {
+  margin: 0;
+  opacity: 0.9;
+}
+
+main {
+  max-width: 640px;
+  margin: 0 auto;
+  padding: 16px;
+}
+
+/* ===== TARJETAS (los bloques blancos) ===== */
+.tarjeta {
+  background: var(--tarjeta);
+  border: 1px solid var(--borde);
+  border-radius: 12px;
+  padding: 16px;
+  margin-bottom: 16px;
+}
+
+.tarjeta h2 {
+  margin-top: 0;
+  font-size: 1.2rem;
+}
+
+.pista {
+  color: var(--texto-suave);
+  font-size: 0.9rem;
+  margin-bottom: 0;
+}
+
+/* ===== FORMULARIO ===== */
+form {
+  display: flex;
+  gap: 8px;
+}
+
+input,
+select {
+  font: inherit;
+  padding: 10px;
+  border: 1px solid var(--borde);
+  border-radius: 8px;
+}
+
+input {
+  flex: 1;
+  min-width: 0;
+}
+
+/* ===== BOTONES ===== */
+button {
+  font: inherit;
+  cursor: pointer;
+  border: none;
+  border-radius: 8px;
+  padding: 10px 14px;
+  background: var(--cesped);
+  color: white;
+}
+
+button:hover {
+  background: var(--cesped-oscuro);
+}
+
+button.principal {
+  width: 100%;
+  font-size: 1.1rem;
+  font-weight: bold;
+  padding: 14px;
+}
+
+button.secundario {
+  width: 100%;
+  margin-top: 12px;
+  background: white;
+  color: var(--cesped);
+  border: 2px solid var(--cesped);
+}
+
+button.secundario:hover {
+  background: var(--fondo);
+}
+
+/* ===== LISTA DE JUGADORES ===== */
+#lista-jugadores {
+  list-style: none;
+  padding: 0;
+  margin: 16px 0 0;
+}
+
+#lista-jugadores li {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 8px 4px;
+  border-bottom: 1px solid var(--borde);
+}
+
+button.borrar {
+  background: transparent;
+  color: var(--texto-suave);
+  padding: 4px 10px;
+}
+
+button.borrar:hover {
+  background: #fde8e8;
+  color: #b42318;
+}
+
+/* ===== EQUIPOS ===== */
+.equipos {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  margin-top: 16px;
+}
+
+.equipo {
+  border-radius: 10px;
+  padding: 12px;
+}
+
+.equipo h3 {
+  margin: 0 0 4px;
+}
+
+.equipo ul {
+  padding-left: 18px;
+  margin: 8px 0 0;
+}
+
+.equipo-a {
+  background: var(--equipo-a);
+  color: var(--texto);
+  border: 1px solid var(--borde);
+}
+
+.equipo-b {
+  background: var(--equipo-b);
+  color: white;
+}
+
+.equipo .total {
+  font-size: 0.85rem;
+  opacity: 0.8;
+}
+
+/* En móviles muy estrechos, un equipo debajo del otro */
+@media (max-width: 400px) {
+  .equipos {
+    grid-template-columns: 1fr;
+  }
+}
