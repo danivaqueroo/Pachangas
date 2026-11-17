@@ -1,15 +1,19 @@
 /* ===== COLORES =====
    Los guardamos con nombre para poder cambiarlos todos desde aquí. */
 :root {
-  --cesped: #c8102e;
-  --cesped-oscuro: #8e0b20;
-  --fondo: #eef5ef;
+  --verde: #1f9d4a;          /* botones */
+  --verde-oscuro: #12672f;   /* "sombra" de los botones (efecto 3D) */
+  --hierba-1: #2c8a3c;       /* rayas del césped */
+  --hierba-2: #349c45;
+  --fondo: #0e3a20;          /* fondo de la página */
   --tarjeta: #ffffff;
-  --texto: #1b2a1f;
+  --texto: #15241a;
   --texto-suave: #5b6b60;
-  --borde: #d5e3d8;
-  --equipo-a: #f4f4f4;
-  --equipo-b: #26302a;
+  --borde: #dbe7de;
+  --equipo-1: #ff8c1a;       /* peto naranja */
+  --equipo-2: #2b7bf3;       /* peto azul */
+  --portero: #ffd60a;        /* camiseta del portero */
+  --inclinacion: 24deg;      /* cuánto se inclina el campo 3D */
 }
 
 /* ===== BASE ===== */
@@ -20,20 +24,47 @@
 body {
   margin: 0;
   font-family: system-ui, -apple-system, "Segoe UI", sans-serif;
-  background: var(--fondo);
   color: var(--texto);
+  /* Fondo de césped oscuro con rayas */
+  background:
+    radial-gradient(ellipse at top, rgba(255, 255, 255, 0.12), transparent 60%),
+    repeating-linear-gradient(90deg, #0e3a20 0 60px, #11452a 60px 120px);
+  background-color: var(--fondo);
+  min-height: 100vh;
 }
 
+/* ===== CABECERA ===== */
 header {
-  background: var(--cesped);
-  color: white;
   text-align: center;
-  padding: 28px 16px;
+  padding: 32px 16px 20px;
+  color: white;
 }
 
+.balon {
+  font-size: 2.6rem;
+  display: inline-block;
+  animation: bote 1.6s ease-in-out infinite;
+  filter: drop-shadow(0 10px 6px rgba(0, 0, 0, 0.45));
+}
+
+@keyframes bote {
+  0%, 100% { transform: translateY(0) rotate(0deg); }
+  50% { transform: translateY(-12px) rotate(180deg); }
+}
+
+/* Título con letras en 3D: varias sombras apiladas */
 header h1 {
-  margin: 0 0 6px;
-  font-size: 2rem;
+  margin: 4px 0 8px;
+  font-size: 2.6rem;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  text-shadow:
+    0 1px 0 #d9d9d9,
+    0 2px 0 #c4c4c4,
+    0 3px 0 #adadad,
+    0 4px 0 #969696,
+    0 5px 0 #808080,
+    0 8px 12px rgba(0, 0, 0, 0.55);
 }
 
 header p {
@@ -47,18 +78,37 @@ main {
   padding: 16px;
 }
 
-/* ===== TARJETAS (los bloques blancos) ===== */
+/* ===== TARJETAS (bloques blancos que "flotan") ===== */
 .tarjeta {
   background: var(--tarjeta);
-  border: 1px solid var(--borde);
-  border-radius: 12px;
-  padding: 16px;
-  margin-bottom: 16px;
+  border-radius: 16px;
+  padding: 18px;
+  margin-bottom: 20px;
+  box-shadow:
+    0 2px 0 #c9d6cc,
+    0 6px 0 #a9bcae,
+    0 18px 30px rgba(0, 0, 0, 0.35);
 }
 
 .tarjeta h2 {
   margin-top: 0;
-  font-size: 1.2rem;
+  font-size: 1.25rem;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+/* Circulito verde con el número del paso */
+.numero {
+  display: inline-grid;
+  place-items: center;
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  background: var(--verde);
+  color: white;
+  font-size: 1rem;
+  box-shadow: 0 3px 0 var(--verde-oscuro);
 }
 
 .pista {
@@ -69,55 +119,87 @@ main {
 
 /* ===== FORMULARIO ===== */
 form {
-  display: flex;
+  display: grid;
+  grid-template-columns: auto 1fr auto;
   gap: 8px;
+  align-items: center;
 }
 
-input,
+/* La casilla del nombre ocupa toda la primera fila */
+#nombre {
+  grid-column: 1 / -1;
+}
+
+input[type="text"],
 select {
   font: inherit;
-  padding: 10px;
-  border: 1px solid var(--borde);
-  border-radius: 8px;
-}
-
-input {
-  flex: 1;
+  padding: 10px 12px;
+  border: 2px solid var(--borde);
+  border-radius: 10px;
   min-width: 0;
+  background: white;
 }
 
-/* ===== BOTONES ===== */
-button {
+input[type="text"]:focus,
+select:focus {
+  outline: none;
+  border-color: var(--verde);
+}
+
+.check-portero {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  cursor: pointer;
+  user-select: none;
+}
+
+.check-portero input {
+  width: 18px;
+  height: 18px;
+  accent-color: var(--verde);
+}
+
+/* ===== BOTONES 3D =====
+   El truco: una sombra sólida debajo que hace de "grosor".
+   Al pulsar, el botón baja y la sombra se encoge. */
+.boton {
   font: inherit;
+  font-weight: 600;
   cursor: pointer;
   border: none;
-  border-radius: 8px;
-  padding: 10px 14px;
-  background: var(--cesped);
+  border-radius: 10px;
+  padding: 10px 16px;
+  background: var(--verde);
   color: white;
+  box-shadow: 0 5px 0 var(--verde-oscuro), 0 8px 14px rgba(0, 0, 0, 0.25);
+  transform: translateY(0);
+  transition: transform 0.08s, box-shadow 0.08s, filter 0.15s;
 }
 
-button:hover {
-  background: var(--cesped-oscuro);
+.boton:hover {
+  filter: brightness(1.08);
 }
 
-button.principal {
+.boton:active {
+  transform: translateY(4px);
+  box-shadow: 0 1px 0 var(--verde-oscuro), 0 3px 6px rgba(0, 0, 0, 0.25);
+}
+
+.boton.principal {
   width: 100%;
-  font-size: 1.1rem;
-  font-weight: bold;
+  font-size: 1.15rem;
   padding: 14px;
+  margin-top: 16px;
 }
 
-button.secundario {
+.boton.secundario {
   width: 100%;
-  margin-top: 12px;
+  margin-top: 18px;
   background: white;
-  color: var(--cesped);
-  border: 2px solid var(--cesped);
-}
-
-button.secundario:hover {
-  background: var(--fondo);
+  color: var(--verde-oscuro);
+  border: 2px solid var(--verde);
+  box-shadow: 0 5px 0 var(--verde), 0 8px 14px rgba(0, 0, 0, 0.15);
 }
 
 /* ===== LISTA DE JUGADORES ===== */
@@ -129,64 +211,318 @@ button.secundario:hover {
 
 #lista-jugadores li {
   display: flex;
-  justify-content: space-between;
   align-items: center;
+  gap: 6px;
   padding: 8px 4px;
   border-bottom: 1px solid var(--borde);
 }
 
-button.borrar {
-  background: transparent;
-  color: var(--texto-suave);
-  padding: 4px 10px;
+#lista-jugadores .texto-jugador {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
-button.borrar:hover {
+.icono {
+  font: inherit;
+  cursor: pointer;
+  border: none;
+  background: transparent;
+  border-radius: 8px;
+  padding: 4px 8px;
+  font-size: 1.1rem;
+}
+
+/* El guante sale apagado si NO es portero */
+.icono.portero {
+  filter: grayscale(1);
+  opacity: 0.3;
+}
+
+.icono.portero[aria-pressed="true"] {
+  filter: none;
+  opacity: 1;
+  background: #fff6c2;
+}
+
+.icono.borrar {
+  color: var(--texto-suave);
+  font-size: 1rem;
+}
+
+.icono.borrar:hover {
   background: #fde8e8;
   color: #b42318;
 }
 
-/* ===== EQUIPOS ===== */
-.equipos {
+/* ===== NOMBRES DE LOS EQUIPOS ===== */
+.nombres-equipos {
   display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 12px;
-  margin-top: 16px;
+  grid-template-columns: 1fr auto 1fr;
+  gap: 8px;
+  align-items: center;
 }
 
-.equipo {
-  border-radius: 10px;
-  padding: 12px;
+.nombre-equipo {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  min-width: 0;
 }
 
-.equipo h3 {
-  margin: 0 0 4px;
+.nombre-equipo input {
+  width: 100%;
+  font-weight: 600;
 }
 
-.equipo ul {
-  padding-left: 18px;
-  margin: 8px 0 0;
+.vs {
+  font-weight: 800;
+  color: var(--texto-suave);
 }
 
-.equipo-a {
-  background: var(--equipo-a);
-  color: var(--texto);
-  border: 1px solid var(--borde);
+/* Bolita de color del peto */
+.peto {
+  flex: none;
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  box-shadow: inset 0 -3px 0 rgba(0, 0, 0, 0.25);
 }
 
-.equipo-b {
-  background: var(--equipo-b);
+.equipo-1 .peto { background: var(--equipo-1); }
+.equipo-2 .peto { background: var(--equipo-2); }
+
+/* ===== MARCADOR ===== */
+.marcador {
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  align-items: center;
+  gap: 8px;
+  margin-top: 22px;
+  padding: 10px 12px;
+  border-radius: 12px;
+  background: #15241a;
   color: white;
+  box-shadow: 0 4px 0 #000, 0 10px 18px rgba(0, 0, 0, 0.3);
 }
 
-.equipo .total {
+.marcador .lado {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.marcador .lado.derecha {
+  text-align: right;
+}
+
+.marcador .nombre {
+  font-weight: 700;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.marcador .lado.izquierda .nombre { color: var(--equipo-1); }
+.marcador .lado.derecha .nombre { color: var(--equipo-2); }
+
+.marcador .total {
+  font-size: 0.8rem;
+  opacity: 0.75;
+}
+
+/* ===== CAMPO 3D =====
+   "perspective" en el contenedor + "rotateX" en el campo = el campo se tumba.
+   Luego los jugadores se giran al revés para quedarse "de pie". */
+.estadio {
+  perspective: 900px;
+  perspective-origin: 50% 0%;
+  padding: 18px 4px 6px;
+}
+
+.campo {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  min-height: 460px;
+  border: 4px solid rgba(255, 255, 255, 0.9);
+  border-radius: 6px;
+  background: repeating-linear-gradient(
+    to bottom,
+    var(--hierba-1) 0 46px,
+    var(--hierba-2) 46px 92px
+  );
+  transform: rotateX(var(--inclinacion));
+  transform-origin: 50% 100%;
+  transform-style: preserve-3d;
+  box-shadow:
+    0 0 0 6px #1d6b2c,
+    0 30px 30px rgba(0, 0, 0, 0.45);
+}
+
+/* Líneas del campo (blancas) */
+.linea {
+  position: absolute;
+  border: 3px solid rgba(255, 255, 255, 0.85);
+  pointer-events: none;
+}
+
+.linea.medio {
+  left: 0;
+  right: 0;
+  top: 50%;
+  border-width: 3px 0 0;
+}
+
+.linea.circulo {
+  width: 90px;
+  height: 90px;
+  left: 50%;
+  top: 50%;
+  border-radius: 50%;
+  transform: translate(-50%, -50%);
+}
+
+.linea.area {
+  left: 25%;
+  right: 25%;
+  height: 60px;
+}
+
+.linea.area.arriba { top: -3px; border-top: none; }
+.linea.area.abajo { bottom: -3px; border-bottom: none; }
+
+/* Porterías */
+.porteria {
+  position: absolute;
+  left: 38%;
+  right: 38%;
+  height: 10px;
+  background: repeating-linear-gradient(90deg, #fff 0 3px, transparent 3px 7px);
+  border: 3px solid #fff;
+}
+
+.porteria.arriba { top: -16px; border-bottom: none; }
+.porteria.abajo { bottom: -16px; border-top: none; }
+
+/* Cada mitad del campo es para un equipo */
+.mitad {
+  position: relative;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-around;
+  padding: 10px 4px;
+  transform-style: preserve-3d;
+}
+
+.fila {
+  display: flex;
+  justify-content: space-around;
+  align-items: flex-end;
+  min-height: 62px;
+  transform-style: preserve-3d;
+}
+
+/* ===== JUGADORES (las fichas del campo) ===== */
+.jugador {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 76px;
+  transform: rotateX(calc(-1 * var(--inclinacion)));
+  transform-origin: 50% 100%;
+  animation: entrar 0.35s ease-out both;
+}
+
+@keyframes entrar {
+  from { opacity: 0; translate: 0 -14px; }
+  to { opacity: 1; translate: 0 0; }
+}
+
+.camiseta {
+  position: relative;
+  display: grid;
+  place-items: center;
+  width: 42px;
+  height: 42px;
+  border-radius: 50%;
+  border: 3px solid white;
+  color: white;
+  font-weight: 800;
   font-size: 0.85rem;
-  opacity: 0.8;
+  text-shadow: 0 1px 1px rgba(0, 0, 0, 0.4);
+  box-shadow:
+    inset 0 -6px 0 rgba(0, 0, 0, 0.22),
+    inset 0 4px 0 rgba(255, 255, 255, 0.3),
+    0 6px 6px rgba(0, 0, 0, 0.45);
 }
 
-/* En móviles muy estrechos, un equipo debajo del otro */
-@media (max-width: 400px) {
-  .equipos {
-    grid-template-columns: 1fr;
+.mitad.equipo-1 .camiseta { background: var(--equipo-1); }
+.mitad.equipo-2 .camiseta { background: var(--equipo-2); }
+
+/* El portero lleva otro color y el guante */
+.mitad .jugador.es-portero .camiseta {
+  background: var(--portero);
+  color: #222;
+  text-shadow: none;
+}
+
+.guante {
+  position: absolute;
+  right: -10px;
+  top: -8px;
+  font-size: 0.95rem;
+}
+
+.etiqueta {
+  margin-top: 4px;
+  max-width: 76px;
+  padding: 1px 7px;
+  border-radius: 999px;
+  background: rgba(0, 0, 0, 0.6);
+  color: white;
+  font-size: 0.72rem;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.sin-portero {
+  align-self: center;
+  font-size: 0.75rem;
+  color: white;
+  background: rgba(0, 0, 0, 0.45);
+  padding: 2px 8px;
+  border-radius: 999px;
+}
+
+/* Si la persona prefiere menos movimiento, quitamos animaciones */
+@media (prefers-reduced-motion: reduce) {
+  .balon,
+  .jugador {
+    animation: none;
+  }
+}
+
+/* Móviles estrechos: fichas un poco más pequeñas */
+@media (max-width: 420px) {
+  header h1 {
+    font-size: 2.1rem;
+  }
+
+  .jugador {
+    width: 64px;
+  }
+
+  .etiqueta {
+    max-width: 64px;
+  }
+
+  .camiseta {
+    width: 36px;
+    height: 36px;
   }
 }

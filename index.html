@@ -12,14 +12,15 @@
   <!-- El "cuerpo": todo lo que se ve en pantalla -->
 
   <header>
-    <h1>⚽ Pachanga</h1>
+    <div class="balon" aria-hidden="true">⚽</div>
+    <h1>Pachanga</h1>
     <p>Apunta a los jugadores, ponles nivel y reparte equipos equilibrados.</p>
   </header>
 
   <main>
     <!-- Bloque 1: añadir jugadores -->
     <section class="tarjeta">
-      <h2>1. Jugadores</h2>
+      <h2><span class="numero">1</span> Jugadores</h2>
 
       <form id="form-jugador">
         <input id="nombre" type="text" placeholder="Nombre del jugador" required maxlength="20" autocomplete="off">
@@ -30,7 +31,10 @@
           <option value="4">⭐ 4</option>
           <option value="5">⭐ 5</option>
         </select>
-        <button type="submit">Añadir</button>
+        <label class="check-portero">
+          <input id="es-portero" type="checkbox"> 🧤 Portero
+        </label>
+        <button type="submit" class="boton">Añadir</button>
       </form>
 
       <ul id="lista-jugadores"></ul>
@@ -39,10 +43,55 @@
 
     <!-- Bloque 2: hacer los equipos -->
     <section class="tarjeta">
-      <h2>2. Equipos</h2>
-      <button id="boton-repartir" class="principal">Hacer equipos</button>
-      <div id="equipos" class="equipos"></div>
-      <button id="boton-copiar" class="secundario" hidden>📋 Copiar para WhatsApp</button>
+      <h2><span class="numero">2</span> Equipos</h2>
+
+      <!-- Nombres de los equipos: se pueden cambiar escribiendo -->
+      <div class="nombres-equipos">
+        <label class="nombre-equipo equipo-1">
+          <span class="peto"></span>
+          <input id="nombre-equipo-1" type="text" maxlength="20" aria-label="Nombre del equipo 1">
+        </label>
+        <span class="vs">VS</span>
+        <label class="nombre-equipo equipo-2">
+          <span class="peto"></span>
+          <input id="nombre-equipo-2" type="text" maxlength="20" aria-label="Nombre del equipo 2">
+        </label>
+      </div>
+
+      <button id="boton-repartir" class="boton principal">Hacer equipos</button>
+
+      <!-- Aquí aparecen los equipos (oculto hasta que se repartan) -->
+      <div id="resultado" hidden>
+        <div class="marcador">
+          <div class="lado izquierda">
+            <span class="nombre" id="marcador-nombre-1"></span>
+            <span class="total" id="marcador-total-1"></span>
+          </div>
+          <span class="vs">VS</span>
+          <div class="lado derecha">
+            <span class="nombre" id="marcador-nombre-2"></span>
+            <span class="total" id="marcador-total-2"></span>
+          </div>
+        </div>
+
+        <!-- El campo en 3D -->
+        <div class="estadio">
+          <div class="campo">
+            <div class="porteria arriba"></div>
+            <div class="linea area arriba"></div>
+            <div class="linea medio"></div>
+            <div class="linea circulo"></div>
+            <div class="linea area abajo"></div>
+            <div class="porteria abajo"></div>
+
+            <!-- Arriba juega el equipo 2 y abajo el equipo 1 -->
+            <div class="mitad equipo-2" id="mitad-2"></div>
+            <div class="mitad equipo-1" id="mitad-1"></div>
+          </div>
+        </div>
+
+        <button id="boton-copiar" class="boton secundario">📋 Copiar para WhatsApp</button>
+      </div>
     </section>
   </main>
 
