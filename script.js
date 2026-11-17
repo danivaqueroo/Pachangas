@@ -163,11 +163,15 @@ inputsNombre.forEach(function (input, i) {
 inputsColor.forEach(function (input, i) {
   input.value = coloresEquipos[i];
 
-  input.addEventListener("input", function () {
-    coloresEquipos[i] = input.value;
-    guardar("pachanga-colores", coloresEquipos);
-    aplicarColores();
-  });
+  // "input" mientras mueves el color; "change" al cerrar la paleta
+  for (const tipoEvento of ["input", "change"]) {
+    input.addEventListener(tipoEvento, function () {
+      coloresEquipos[i] = input.value;
+      guardar("pachanga-colores", coloresEquipos);
+      aplicarColores(); // cambia petos, marcador, casillas y fichas del campo
+      pintarPago();     // y el circulito de color del mensaje de WhatsApp
+    });
+  }
 });
 
 // numero = 1 o 2
@@ -409,11 +413,15 @@ const casillas = {
   perdedor: campoPerdedor, pagador: campoPagador, bizum: campoBizum,
 };
 for (const clave in casillas) {
-  casillas[clave].addEventListener("input", function () {
-    partido[clave] = casillas[clave].value;
-    guardar("pachanga-partido", partido);
-    pintarPago();
-  });
+  // "input" salta al escribir; "change" al elegir en una lista o calendario
+  // (algunos móviles solo avisan con "change", así que escuchamos los dos)
+  for (const tipoEvento of ["input", "change"]) {
+    casillas[clave].addEventListener(tipoEvento, function () {
+      partido[clave] = casillas[clave].value;
+      guardar("pachanga-partido", partido);
+      pintarPago();
+    });
+  }
 }
 
 radiosModo.forEach(function (radio) {
@@ -510,6 +518,11 @@ function textoDestino() {
 
 // Dibuja la caja del resumen del pago
 function pintarPago() {
+  pintarResumenPago();
+  actualizarCompartir(); // el mensaje de WhatsApp también cambia
+}
+
+function pintarResumenPago() {
   bloquePerdedor.hidden = partido.modo !== "pierde";
   resumenPago.innerHTML = "";
 
@@ -623,23 +636,42 @@ function construirMensaje() {
   return texto;
 }
 
-function hayAlgoQueCompartir() {
-  if (!ultimosEquipos && !partido.fecha && !partido.lugar.trim()) {
-    alert("Haz los equipos o rellena el día y el lugar antes de compartir.");
-    return false;
-  }
-  return true;
+const avisoCompartir = $("aviso-compartir");
+const textoPrevia = $("texto-previa");
+
+// Prepara el enlace de WhatsApp y la vista previa con los datos actuales.
+// Se llama cada vez que cambia algo, así el enlace siempre está al día.
+function actualizarCompartir() {
+  const texto = construirMensaje();
+  textoPrevia.textContent = texto;
+  // Usamos la dirección directa de WhatsApp. El atajo "wa.me" hace una
+  // redirección que estropea los emojis (salen como "?" en WhatsApp Web).
+  botonWhatsapp.href = "https://api.whatsapp.com/send?text=" + encodeURIComponent(texto);
+  if (hayAlgoQueCompartir()) avisoCompartir.hidden = true;
 }
 
-// Abre WhatsApp con el mensaje ya escrito (tú eliges el grupo)
-botonWhatsapp.addEventListener("click", function () {
-  if (!hayAlgoQueCompartir()) return;
-  const enlace = "https://wa.me/?text=" + encodeURIComponent(construirMensaje());
-  window.open(enlace, "_blank", "noopener");
+function hayAlgoQueCompartir() {
+  return Boolean(ultimosEquipos || partido.fecha || partido.lugar.trim());
+}
+
+// Si todavía no hay nada que mandar, avisamos en vez de abrir WhatsApp
+function comprobarAntesDeCompartir(evento) {
+  if (hayAlgoQueCompartir()) return true;
+  evento.preventDefault();
+  avisoCompartir.textContent = "⚠️ Primero haz los equipos (apartado 2) o rellena el día y el lugar (apartado 3).";
+  avisoCompartir.hidden = false;
+  return false;
+}
+
+// El botón de WhatsApp es un enlace que abre WhatsApp con el
+// mensaje ya escrito: solo tienes que elegir el grupo y enviarlo.
+botonWhatsapp.addEventListener("click", function (evento) {
+  if (!comprobarAntesDeCompartir(evento)) return;
+  actualizarCompartir(); // por si acaso, justo antes de abrirlo
 });
 
-botonCopiar.addEventListener("click", async function () {
-  if (!hayAlgoQueCompartir()) return;
+botonCopiar.addEventListener("click", async function (evento) {
+  if (!comprobarAntesDeCompartir(evento)) return;
   const texto = construirMensaje();
   try {
     await navigator.clipboard.writeText(texto);

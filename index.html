@@ -5,8 +5,10 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Pachanga: generador de equipos</title>
-  <!-- Aquí conectamos el archivo de estilos (colores, tamaños, etc.) -->
-  <link rel="stylesheet" href="style.css">
+  <!-- Aquí conectamos el archivo de estilos (colores, tamaños, etc.)
+       El "?v=5" es el número de versión: al subirlo, el navegador
+       sabe que tiene que descargar el archivo nuevo y no usar uno viejo. -->
+  <link rel="stylesheet" href="style.css?v=5">
 </head>
 <body>
   <!-- El "cuerpo": todo lo que se ve en pantalla -->
@@ -158,12 +160,20 @@
     <section class="tarjeta">
       <h2><span class="numero">5</span> Compartir</h2>
       <p class="pista">Manda los equipos, la hora, el lugar y lo que paga cada uno.</p>
-      <button id="boton-whatsapp" class="boton principal whatsapp">💬 Enviar por WhatsApp</button>
+      <!-- Es un enlace (no un botón) para que el móvil abra WhatsApp directamente -->
+      <a id="boton-whatsapp" class="boton principal whatsapp" href="https://api.whatsapp.com/send" target="_blank" rel="noopener">💬 Enviar por WhatsApp</a>
       <button id="boton-copiar" class="boton secundario">📋 Copiar texto</button>
+      <p id="aviso-compartir" class="aviso-compartir" hidden></p>
+
+      <!-- Vista previa del mensaje que se va a mandar -->
+      <details class="vista-previa">
+        <summary>👀 Ver el mensaje antes de mandarlo</summary>
+        <pre id="texto-previa"></pre>
+      </details>
     </section>
   </main>
 
   <!-- Aquí conectamos el archivo con la lógica (lo que hace cosas) -->
-  <script src="script.js"></script>
+  <script src="script.js?v=5"></script>
 </body>
 </html>
