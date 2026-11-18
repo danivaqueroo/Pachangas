@@ -8,7 +8,7 @@
   <!-- Aquí conectamos el archivo de estilos (colores, tamaños, etc.)
        El "?v=6" es el número de versión: al subirlo, el navegador
        sabe que tiene que descargar el archivo nuevo y no usar uno viejo. -->
-  <link rel="stylesheet" href="style.css?v=6">
+  <link rel="stylesheet" href="style.css?v=7">
 </head>
 <body>
   <!-- El "cuerpo": todo lo que se ve en pantalla -->
@@ -108,8 +108,15 @@
           <span>📍 Lugar</span>
           <input id="lugar" type="text" maxlength="80" placeholder="Ej.: Polideportivo Municipal, pista 2">
         </label>
+        <div class="campo-form">
+          <span>🗺️ ¿Poner enlace de Google Maps?</span>
+          <div class="interruptor" role="radiogroup" aria-label="Poner enlace de Google Maps en el mensaje">
+            <label><input type="radio" name="maps" value="si" checked><span>Sí</span></label>
+            <label><input type="radio" name="maps" value="no"><span>No, solo el nombre</span></label>
+          </div>
+        </div>
       </div>
-      <p class="pista">Al compartir, el lugar irá con un enlace a Google Maps.</p>
+      <p class="pista">Si eliges «Sí», al compartir el lugar irá con un enlace a Google Maps.</p>
     </section>
 
     <!-- ===== Bloque 4: pago del campo ===== -->
@@ -174,6 +181,6 @@
   </main>
 
   <!-- Aquí conectamos el archivo con la lógica (lo que hace cosas) -->
-  <script src="script.js?v=6"></script>
+  <script src="script.js?v=7"></script>
 </body>
 </html>

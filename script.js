@@ -18,6 +18,7 @@ let ultimosEquipos = cargar("pachanga-equipos", null); // los últimos equipos h
 let partido = cargar("pachanga-partido", {
   fecha: "",
   lugar: "",
+  maps: true,         // ¿el mensaje lleva enlace de Google Maps?
   precio: "",
   modo: "todos",      // "todos" o "pierde"
   perdedor: "",       // "", "1", "2" o "empate"
@@ -47,6 +48,7 @@ const resultado = $("resultado");
 
 const campoFecha = $("fecha");
 const campoLugar = $("lugar");
+const radiosMaps = document.querySelectorAll('input[name="maps"]');
 const campoPrecio = $("precio");
 const radiosModo = document.querySelectorAll('input[name="modo-pago"]');
 const bloquePerdedor = $("bloque-perdedor");
@@ -406,6 +408,10 @@ campoBizum.value = partido.bizum;
 radiosModo.forEach(function (radio) {
   radio.checked = radio.value === partido.modo;
 });
+// Quien ya usaba la web no tiene "maps" guardado: si no está, cuenta como "Sí"
+radiosMaps.forEach(function (radio) {
+  radio.checked = radio.value === (partido.maps === false ? "no" : "si");
+});
 
 // Cada vez que se escribe algo, se guarda y se recalcula
 const casillas = {
@@ -423,6 +429,13 @@ for (const clave in casillas) {
     });
   }
 }
+
+radiosMaps.forEach(function (radio) {
+  radio.addEventListener("change", function () {
+    partido.maps = radio.value === "si";
+    guardar("pachanga-partido", partido);
+  });
+});
 
 radiosModo.forEach(function (radio) {
   radio.addEventListener("change", function () {
@@ -602,7 +615,9 @@ function construirMensaje() {
   if (partido.lugar.trim()) {
     const lugar = partido.lugar.trim();
     texto += "📍 " + lugar + "\n";
-    texto += "https://www.google.com/maps/search/?api=1&query=" + encodeURIComponent(lugar) + "\n";
+    if (partido.maps !== false) {
+      texto += "https://www.google.com/maps/search/?api=1&query=" + encodeURIComponent(lugar) + "\n";
+    }
   }
 
   if (ultimosEquipos) {
