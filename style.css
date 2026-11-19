@@ -1,23 +1,106 @@
-/* ===== COLORES =====
-   Los guardamos con nombre para poder cambiarlos todos desde aquí. */
+/* =====================================================
+   PACHANGA · "La hoja del partido"
+   Idea: un programa de partido de papel. Portada de periódico,
+   convocatoria con dorsales y estrellas,
+   entrada con talón y la cuenta como un ticket de caja.
+   Movimiento: muelles sin rebote (skill apple-design).
+   ===================================================== */
+
+/* ===== COLORES (de día: papel y tinta) ===== */
 :root {
-  --verde: #1f9d4a;          /* botones */
-  --verde-oscuro: #12672f;   /* "sombra" de los botones (efecto 3D) */
-  --hierba-1: #2c8a3c;       /* rayas del césped */
-  --hierba-2: #349c45;
-  --fondo: #0e3a20;          /* fondo de la página */
-  --tarjeta: #ffffff;
-  --texto: #15241a;
-  --texto-suave: #5b6b60;
-  --borde: #dbe7de;
-  --equipo-1: #ff8c1a;       /* camiseta naranja (se cambia desde la web) */
-  --equipo-2: #2b7bf3;       /* camiseta azul (se cambia desde la web) */
-  --texto-equipo-1: #ffffff; /* color de letra sobre la camiseta (lo calcula el JS) */
-  --texto-equipo-2: #ffffff;
+  --papel: #f1ebdf;                       /* fondo: papel crudo */
+  --carta: #fbf8f2;                       /* bloques: papel más blanco */
+  --relleno: #e6dfd0;                     /* fondo de controles */
+  --tinta: #17160f;                       /* "negro tinta" */
+  --tinta-2: rgba(23, 22, 15, 0.72);      /* texto secundario */
+  --tinta-3: rgba(23, 22, 15, 0.62);      /* texto suave (legible: contraste 4,5 o más) */
+  --estrella: #8f6200;                    /* dorado oscuro: se ve bien sobre papel */
+  --rojo-fondo: #c22f22;                  /* rojo de fondo con letra blanca */
+  --linea: rgba(23, 22, 15, 0.13);        /* rayitas finas */
+  --linea-fuerte: rgba(23, 22, 15, 0.3);
+  --cesped: #1d6b3a;                      /* verde césped */
+  --cesped-texto: #ffffff;
+  --oro: #f2b705;                         /* amarillo portero */
+  --oro-suave: rgba(242, 183, 5, 0.22);
+  --oro-texto: #6b5000;
+  --rojo: #b8321f;
   --whatsapp: #25d366;
-  --whatsapp-oscuro: #128c4a;
-  --portero: #ffd60a;        /* camiseta del portero */
-  --inclinacion: 24deg;      /* cuánto se inclina el campo 3D */
+  --burbuja: #dcf3c8;                     /* bocadillo tipo chat */
+  --grano: 0.35;                          /* cuánto se nota la textura de papel */
+  --hierba-1: #2e8a4b;
+  --hierba-2: #2a8045;
+
+  --equipo-1: #ff8c1a;           /* camiseta naranja (se cambia desde la web) */
+  --equipo-2: #2b7bf3;           /* camiseta azul (se cambia desde la web) */
+  --texto-equipo-1: #ffffff;     /* color de letra sobre la camiseta (lo calcula el JS) */
+  --texto-equipo-2: #ffffff;
+  --inclinacion: 24deg;          /* cuánto se inclina el campo 3D */
+
+  --letra-titulo: "Big Shoulders Display", "Arial Narrow", Impact, sans-serif;
+  --letra-texto: "Instrument Sans", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --letra-ticket: "IBM Plex Mono", ui-monospace, Consolas, monospace;
+
+  /* "Muelle" sin rebote, calculado punto a punto (respuesta 0,3 s → 440 ms) */
+  --muelle: linear(0, 0.026 2.7%, 0.09 5.4%, 0.173 8.2%, 0.264 10.9%, 0.355 13.6%,
+    0.442 16.3%, 0.522 19%, 0.594 21.7%, 0.692 26.1%, 0.769 30.4%, 0.829 34.8%,
+    0.884 40.2%, 0.928 46.7%, 0.96 54.3%, 0.979 63%, 0.991 73.9%, 0.997 87%, 1);
+  --rapido: 440ms;
+  --normal: 590ms;
+}
+
+/* ===== COLORES (de noche: "partido con focos") =====
+   Se usan si el móvil está en oscuro y la persona no ha elegido "claro",
+   o si ha elegido "oscuro" con el botón de arriba. */
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --papel: #12120e;
+    --carta: #1c1b16;
+    --relleno: #2a2922;
+    --tinta: #f1ebdf;
+    --tinta-2: rgba(241, 235, 223, 0.62);
+    --tinta-3: rgba(241, 235, 223, 0.55);
+    --estrella: #f5c02a;
+    --linea: rgba(241, 235, 223, 0.11);
+    --linea-fuerte: rgba(241, 235, 223, 0.3);
+    --cesped: #3aa463;
+    --cesped-texto: #07160c;
+    --oro: #f5c02a;
+    --oro-suave: rgba(245, 192, 42, 0.18);
+    --oro-texto: #f5c02a;
+    --rojo: #ff6a5b;
+    --burbuja: #1f3b2a;
+    --grano: 0.5;
+    --hierba-1: #236f3b;
+    --hierba-2: #1f6736;
+    color-scheme: dark;
+  }
+}
+
+:root[data-theme="dark"] {
+  --papel: #12120e;
+  --carta: #1c1b16;
+  --relleno: #2a2922;
+  --tinta: #f1ebdf;
+  --tinta-2: rgba(241, 235, 223, 0.62);
+  --tinta-3: rgba(241, 235, 223, 0.55);
+  --estrella: #f5c02a;
+  --linea: rgba(241, 235, 223, 0.11);
+  --linea-fuerte: rgba(241, 235, 223, 0.3);
+  --cesped: #3aa463;
+  --cesped-texto: #07160c;
+  --oro: #f5c02a;
+  --oro-suave: rgba(245, 192, 42, 0.18);
+  --oro-texto: #f5c02a;
+  --rojo: #ff6a5b;
+  --burbuja: #1f3b2a;
+  --grano: 0.5;
+  --hierba-1: #236f3b;
+  --hierba-2: #1f6736;
+  color-scheme: dark;
+}
+
+:root[data-theme="light"] {
+  color-scheme: light;
 }
 
 /* ===== BASE ===== */
@@ -25,306 +108,776 @@
   box-sizing: border-box;
 }
 
+[hidden] {
+  display: none !important;      /* "hidden" siempre oculta, pase lo que pase */
+}
+
+html {
+  font: 100%/1.45 var(--letra-texto);
+  -webkit-text-size-adjust: 100%;
+}
+
 body {
   margin: 0;
-  font-family: system-ui, -apple-system, "Segoe UI", sans-serif;
-  color: var(--texto);
-  /* Fondo de césped oscuro con rayas */
-  background:
-    radial-gradient(ellipse at top, rgba(255, 255, 255, 0.12), transparent 60%),
-    repeating-linear-gradient(90deg, #0e3a20 0 60px, #11452a 60px 120px);
-  background-color: var(--fondo);
-  min-height: 100vh;
+  color: var(--tinta);
+  background: var(--papel);
+  font-size: 1.0625rem;
+  -webkit-font-smoothing: antialiased;
+  -webkit-tap-highlight-color: transparent;
 }
 
-/* ===== CABECERA ===== */
-header {
-  text-align: center;
-  padding: 32px 16px 20px;
-  color: white;
+/* Textura de papel: un "ruido" muy suave por encima de todo (no se mueve) */
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: 100;
+  pointer-events: none;
+  opacity: var(--grano);
+  mix-blend-mode: multiply;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 0.5 0 0 0 0 0.45 0 0 0 0 0.35 0 0 0 0.18 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
 }
 
-.balon {
-  font-size: 2.6rem;
-  display: inline-block;
-  animation: bote 1.6s ease-in-out infinite;
-  filter: drop-shadow(0 10px 6px rgba(0, 0, 0, 0.45));
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) body::before {
+    mix-blend-mode: screen;
+  }
 }
 
-@keyframes bote {
-  0%, 100% { transform: translateY(0) rotate(0deg); }
-  50% { transform: translateY(-12px) rotate(180deg); }
+:root[data-theme="dark"] body::before {
+  mix-blend-mode: screen;
 }
 
-/* Título con letras en 3D: varias sombras apiladas */
-header h1 {
-  margin: 4px 0 8px;
-  font-size: 2.6rem;
-  letter-spacing: 1px;
+/* ===== BARRA DE ARRIBA (aparece al bajar) ===== */
+.barra {
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  height: calc(2.75rem + env(safe-area-inset-top));
+  padding-top: env(safe-area-inset-top);
+  transition: background-color 250ms ease, box-shadow 250ms ease;
+}
+
+/* Lo de dentro de la barra, con el mismo ancho que la página */
+.barra-dentro {
+  position: relative;
+  display: grid;
+  place-items: center;
+  max-width: 40rem;
+  height: 100%;
+  margin: 0 auto;
+  padding: 0 max(1rem, env(safe-area-inset-left));
+}
+
+/* Botón redondo de tema (sol / luna), siempre a la derecha */
+.boton-tema {
+  position: absolute;
+  right: max(0.75rem, env(safe-area-inset-right));
+  top: 50%;
+  translate: 0 -50%;
+  display: grid;
+  place-items: center;
+  width: 2.25rem;
+  height: 2.25rem;
+  padding: 0;
+  border: 1px solid var(--linea);
+  border-radius: 50%;
+  background: var(--carta);
+  color: var(--tinta);
+  cursor: pointer;
+  touch-action: manipulation;
+  transition: transform 100ms ease-out, background-color 300ms ease, color 300ms ease;
+}
+
+.boton-tema:active {
+  transform: scale(0.92);
+}
+
+.boton-tema:focus-visible {
+  outline: 2px solid var(--cesped);
+  outline-offset: 2px;
+}
+
+.boton-tema svg {
+  width: 1.125rem;
+  height: 1.125rem;
+}
+
+/* El dibujo entra girando un poco al cambiar de tema */
+.boton-tema.girando svg {
+  animation: girar-icono var(--normal) var(--muelle);
+}
+
+@keyframes girar-icono {
+  from { rotate: -90deg; scale: 0.5; opacity: 0; }
+  to { rotate: 0deg; scale: 1; opacity: 1; }
+}
+
+/* Mientras cambia el tema, los colores pasan suavemente (no de golpe) */
+.cambiando-tema *,
+.cambiando-tema *::before,
+.cambiando-tema *::after {
+  transition: background-color 300ms ease, color 300ms ease, border-color 300ms ease !important;
+}
+
+.barra.con-titulo {
+  background: color-mix(in srgb, var(--papel) 82%, transparent);
+  -webkit-backdrop-filter: blur(16px) saturate(160%);
+  backdrop-filter: blur(16px) saturate(160%);
+}
+
+.barra-titulo {
+  font-family: var(--letra-titulo);
+  font-weight: 900;
+  font-size: 1.375rem;
+  letter-spacing: 0.02em;
   text-transform: uppercase;
-  text-shadow:
-    0 1px 0 #d9d9d9,
-    0 2px 0 #c4c4c4,
-    0 3px 0 #adadad,
-    0 4px 0 #969696,
-    0 5px 0 #808080,
-    0 8px 12px rgba(0, 0, 0, 0.55);
+  opacity: 0;
+  translate: 0 0.375rem;
+  transition: opacity 200ms ease, translate var(--rapido) var(--muelle);
 }
 
-header p {
-  margin: 0;
-  opacity: 0.9;
+.barra.con-titulo .barra-titulo {
+  opacity: 1;
+  translate: 0 0;
 }
 
 main {
-  max-width: 640px;
+  max-width: 40rem;
   margin: 0 auto;
-  padding: 16px;
+  padding: 0 max(1rem, env(safe-area-inset-left)) calc(6rem + env(safe-area-inset-bottom));
 }
 
-/* ===== TARJETAS (bloques blancos que "flotan") ===== */
+/* ===== PORTADA ===== */
+.portada {
+  margin-top: 0.25rem;
+}
+
+.antetitulo {
+  display: flex;
+  justify-content: flex-start;
+  gap: 1rem;
+  margin: 0.5rem 0 0;
+  padding-bottom: 0.375rem;
+  border-bottom: 1px solid var(--tinta);
+  font-family: var(--letra-ticket);
+  font-size: 0.6875rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.portada h1 {
+  margin: 0.25rem 0 0;
+  padding-bottom: 0.25rem;
+  border-bottom: 5px double var(--tinta);   /* doble raya, como en los periódicos */
+  font-family: var(--letra-titulo);
+  font-weight: 900;
+  font-size: clamp(4rem, 21vw, 7.5rem);
+  line-height: 0.82;
+  letter-spacing: -0.01em;                  /* letras enormes: un poco más juntas */
+  text-transform: uppercase;
+}
+
+.subtitulo {
+  margin: 0.625rem 0 0;
+  max-width: 30ch;
+  color: var(--tinta-2);
+  font-size: 1rem;
+}
+
+/* ===== SECCIONES ===== */
+.grupo {
+  margin-top: 2.75rem;
+  padding-top: 0.625rem;
+  border-top: 2px solid var(--tinta);
+}
+
+.grupo-titulo {
+  display: flex;
+  align-items: baseline;
+  gap: 0.625rem;
+  margin: 0 0 0.875rem;
+  font-family: var(--letra-titulo);
+  font-weight: 900;
+  font-size: 2.125rem;
+  line-height: 1;
+  letter-spacing: 0;
+  text-transform: uppercase;
+}
+
+/* El número de la sección, solo con el borde (como los dorsales pintados) */
+.grupo-titulo .num {
+  color: var(--cesped);
+  font-size: 2.125rem;
+}
+
 .tarjeta {
-  background: var(--tarjeta);
-  border-radius: 16px;
-  padding: 18px;
-  margin-bottom: 20px;
-  box-shadow:
-    0 2px 0 #c9d6cc,
-    0 6px 0 #a9bcae,
-    0 18px 30px rgba(0, 0, 0, 0.35);
+  margin: 0;
+  background: var(--carta);
+  border: 1px solid var(--linea);
+  border-radius: 0.5rem;
 }
 
-.tarjeta h2 {
-  margin-top: 0;
-  font-size: 1.25rem;
+.tarjeta + .tarjeta {
+  margin-top: 0.75rem;
+}
+
+.fila {
+  position: relative;
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: 0.75rem;
+  min-height: 3rem;
+  padding: 0.5rem 1rem;
 }
 
-/* Circulito verde con el número del paso */
-.numero {
-  display: inline-grid;
-  place-items: center;
-  width: 30px;
-  height: 30px;
-  border-radius: 50%;
-  background: var(--verde);
-  color: white;
-  font-size: 1rem;
-  box-shadow: 0 3px 0 var(--verde-oscuro);
+.fila.columna {
+  flex-direction: column;
+  align-items: stretch;
+  gap: 0.5rem;
+  padding: 0.75rem 1rem;
+}
+
+/* Rayita de puntos entre filas, como en un formulario de papel */
+.fila + .fila::before,
+.lista li + li .deslizable::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 1rem;
+  right: 1rem;
+  border-top: 1px dashed var(--linea);
+}
+
+.etiqueta-fila {
+  flex: none;
+  color: var(--tinta-2);
+  font-size: 0.9375rem;
 }
 
 .pista {
-  color: var(--texto-suave);
-  font-size: 0.9rem;
-  margin-bottom: 0;
+  margin: 0.5rem 0.25rem 0;
+  color: var(--tinta-2);
+  font-size: 0.8125rem;
+  line-height: 1.4;
+  letter-spacing: 0.005em;
 }
 
-/* ===== FORMULARIO ===== */
-form {
-  display: grid;
-  grid-template-columns: auto 1fr auto;
-  gap: 8px;
-  align-items: center;
-}
-
-/* La casilla del nombre ocupa toda la primera fila */
-#nombre {
-  grid-column: 1 / -1;
-}
-
-input[type="text"],
-select {
-  font: inherit;
-  padding: 10px 12px;
-  border: 2px solid var(--borde);
-  border-radius: 10px;
-  min-width: 0;
-  background: white;
-}
-
-input[type="text"]:focus,
-select:focus {
-  outline: none;
-  border-color: var(--verde);
-}
-
-.check-portero {
+.pie {
   display: flex;
-  align-items: center;
-  gap: 6px;
-  cursor: pointer;
-  user-select: none;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 0.5rem;
 }
 
-.check-portero input {
-  width: 18px;
-  height: 18px;
-  accent-color: var(--verde);
-}
-
-/* ===== BOTONES 3D =====
-   El truco: una sombra sólida debajo que hace de "grosor".
-   Al pulsar, el botón baja y la sombra se encoge. */
-.boton {
+/* ===== CASILLAS ===== */
+.campo-limpio {
+  flex: 1;
+  min-width: 0;
+  padding: 0.25rem 0;
+  border: none;
+  background: transparent;
+  color: var(--tinta);
   font: inherit;
+  outline: none;
+}
+
+.campo-limpio::placeholder {
+  color: var(--tinta-3);
+}
+
+.campo-limpio.derecha {
+  text-align: right;
+  text-align-last: right;
+  font-weight: 600;
+}
+
+/* Al escribir, la fila se subraya en verde césped */
+.fila:has(.campo-limpio:focus)::after {
+  content: "";
+  position: absolute;
+  left: 1rem;
+  right: 1rem;
+  bottom: -1px;
+  height: 2px;
+  background: var(--cesped);
+  animation: subrayar var(--rapido) var(--muelle);
+}
+
+@keyframes subrayar {
+  from { scale: 0 1; }
+  to { scale: 1 1; }
+}
+
+.con-unidad {
+  flex: 1;
+  display: flex;
+  align-items: baseline;
+  gap: 0.25rem;
+  min-width: 0;
+}
+
+.unidad {
+  color: var(--tinta-2);
+  font-weight: 600;
+}
+
+input[type="datetime-local"].campo-limpio {
+  min-height: 1.75rem;
+}
+
+select.campo-limpio {
+  cursor: pointer;
+}
+
+/* Botones con los nombres para "Lo ha pagado" (se deslizan de lado si son muchos) */
+.fila.sugerencias {
+  gap: 0.375rem;
+  padding-top: 0;
+  overflow-x: auto;
+  scrollbar-width: none;
+  -webkit-overflow-scrolling: touch;
+}
+
+.fila.sugerencias::before {
+  display: none;               /* sin rayita: va pegada a la fila de arriba */
+}
+
+.fila.sugerencias::-webkit-scrollbar {
+  display: none;
+}
+
+.sugerencia {
+  flex: none;
+  padding: 0.3125rem 0.75rem;
+  border: 1px solid var(--linea-fuerte);
+  border-radius: 999px;
+  background: transparent;
+  color: var(--tinta);
+  font: inherit;
+  font-size: 0.875rem;
   font-weight: 600;
   cursor: pointer;
-  border: none;
-  border-radius: 10px;
-  padding: 10px 16px;
-  background: var(--verde);
-  color: white;
-  box-shadow: 0 5px 0 var(--verde-oscuro), 0 8px 14px rgba(0, 0, 0, 0.25);
-  transform: translateY(0);
-  transition: transform 0.08s, box-shadow 0.08s, filter 0.15s;
+  touch-action: manipulation;
+  transition: transform 100ms ease-out, background-color 200ms ease, color 200ms ease;
 }
 
-.boton:hover {
-  filter: brightness(1.08);
+.sugerencia:active {
+  transform: scale(0.94);
+}
+
+.sugerencia[aria-pressed="true"] {
+  border-color: var(--cesped);
+  background: var(--cesped);
+  color: var(--cesped-texto);
+}
+
+.sugerencia:focus-visible {
+  outline: 2px solid var(--cesped);
+  outline-offset: 2px;
+}
+
+/* La lista que se despliega: con fondo de verdad (si no, salía transparente) */
+select.campo-limpio option {
+  background-color: var(--carta);
+  color: var(--tinta);
+}
+
+/* ===== CONTROL SEGMENTADO (la pastilla negra se desliza) ===== */
+.segmentado {
+  --i: 0;
+  position: relative;
+  flex: 1;
+  display: grid;
+  grid-template-columns: repeat(var(--n), 1fr);
+  padding: 3px;
+  border-radius: 0.5rem;
+  background: var(--relleno);
+}
+
+.segmentado::before {
+  content: "";
+  position: absolute;
+  top: 3px;
+  bottom: 3px;
+  left: 3px;
+  width: calc((100% - 6px) / var(--n));
+  border-radius: 0.3125rem;
+  background: var(--tinta);
+  translate: calc(var(--i) * 100%) 0;
+  transition: translate var(--rapido) var(--muelle);
+}
+
+.segmentado:has(label:nth-child(2) input:checked) { --i: 1; }
+.segmentado:has(label:nth-child(3) input:checked) { --i: 2; }
+.segmentado:has(label:nth-child(4) input:checked) { --i: 3; }
+.segmentado:has(label:nth-child(5) input:checked) { --i: 4; }
+
+.segmentado label {
+  position: relative;
+  cursor: pointer;
+}
+
+.segmentado input {
+  position: absolute;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.segmentado span {
+  display: block;
+  padding: 0.375rem 0.25rem;
+  text-align: center;
+  font-size: 0.875rem;
+  font-weight: 600;
+  transition: color 200ms ease;
+}
+
+.segmentado input:checked + span {
+  color: var(--papel);
+}
+
+.segmentado input:focus-visible + span {
+  outline: 2px solid var(--cesped);
+  outline-offset: -2px;
+  border-radius: 0.3125rem;
+}
+
+/* ===== INTERRUPTOR (para "Portero") ===== */
+.interruptor {
+  -webkit-appearance: none;
+  appearance: none;
+  position: relative;
+  flex: none;
+  margin: 0 0 0 auto;
+  width: 3.1875rem;
+  height: 1.9375rem;
+  border-radius: 999px;
+  background: var(--relleno);
+  cursor: pointer;
+  transition: background-color 250ms ease;
+}
+
+.interruptor::before {
+  content: "";
+  position: absolute;
+  top: 2px;
+  left: 2px;
+  width: 1.6875rem;
+  height: 1.6875rem;
+  border-radius: 50%;
+  background: #ffffff;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+  transition: translate var(--rapido) var(--muelle), scale 150ms ease-out;
+}
+
+/* Encendido = amarillo portero */
+.interruptor:checked {
+  background: var(--oro);
+}
+
+.interruptor:checked::before {
+  translate: 1.25rem 0;
+}
+
+.interruptor:active::before {
+  scale: 1.08 0.94;
+}
+
+.interruptor:focus-visible {
+  outline: 2px solid var(--cesped);
+  outline-offset: 2px;
+}
+
+/* ===== BOTONES ===== */
+.boton {
+  font: inherit;
+  font-weight: 700;
+  border: none;
+  border-radius: 0.5rem;
+  cursor: pointer;
+  touch-action: manipulation;
+  transition: transform 100ms ease-out, opacity 200ms ease, background-color 200ms ease;
 }
 
 .boton:active {
-  transform: translateY(4px);
-  box-shadow: 0 1px 0 var(--verde-oscuro), 0 3px 6px rgba(0, 0, 0, 0.25);
+  transform: scale(0.97);
 }
 
+.boton:focus-visible {
+  outline: 2px solid var(--cesped);
+  outline-offset: 2px;
+}
+
+/* Botón principal: tinta negra con la raya de los dos equipos debajo */
 .boton.principal {
-  width: 100%;
-  font-size: 1.15rem;
-  padding: 14px;
-  margin-top: 16px;
+  background:
+    linear-gradient(90deg, var(--equipo-1) 50%, var(--equipo-2) 50%) bottom / 100% 0.3125rem no-repeat,
+    var(--tinta);
+  color: var(--papel);
+  font-family: var(--letra-titulo);
+  font-size: 1.5rem;
+  font-weight: 800;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
 }
 
-.boton.secundario {
-  width: 100%;
-  margin-top: 18px;
-  background: white;
-  color: var(--verde-oscuro);
-  border: 2px solid var(--verde);
-  box-shadow: 0 5px 0 var(--verde), 0 8px 14px rgba(0, 0, 0, 0.15);
+.boton.verde {
+  background: var(--cesped);
+  color: var(--cesped-texto);
 }
 
-/* ===== LISTA DE JUGADORES ===== */
-#lista-jugadores {
+.boton.whatsapp {
+  background: var(--whatsapp);
+  color: #062b14;
+}
+
+.boton.gris {
+  background: var(--relleno);
+  color: var(--tinta);
+}
+
+.boton.grande {
+  display: block;
+  width: 100%;
+  min-height: 3.25rem;
+  margin-top: 0.75rem;
+  padding: 0.8125rem 1rem;
+  text-align: center;
+  text-decoration: none;
+}
+
+.boton.pequeno {
+  flex: none;
+  padding: 0.375rem 0.875rem;
+  border-radius: 999px;
+  font-size: 0.9375rem;
+}
+
+.boton.enlace {
+  flex: none;
+  margin-top: 0.25rem;
+  padding: 0.25rem 0.5rem;
+  background: none;
+  color: var(--cesped);
+  font-size: 0.9375rem;
+  font-weight: 600;
+}
+
+.boton.enlace.peligro {
+  color: var(--rojo);
+}
+
+@media (hover: hover) {
+  .boton.principal:hover,
+  .boton.verde:hover,
+  .boton.whatsapp:hover { opacity: 0.9; }
+  .boton.gris:hover { background: color-mix(in srgb, var(--relleno) 80%, var(--tinta)); }
+  .boton.enlace:hover { opacity: 0.7; }
+}
+
+/* ===== CONVOCATORIA (lista de jugadores) ===== */
+.lista {
   list-style: none;
   padding: 0;
-  margin: 16px 0 0;
+  overflow: hidden;
 }
 
-#lista-jugadores li {
+.lista:empty {
+  display: none;
+}
+
+.lista li {
+  position: relative;
+  overflow: hidden;
+}
+
+/* Fondo rojo con "Borrar" que aparece al deslizar la fila */
+.accion-borrar {
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  width: 0;
   display: flex;
   align-items: center;
-  gap: 6px;
-  padding: 8px 4px;
-  border-bottom: 1px solid var(--borde);
+  justify-content: flex-end;
+  padding: 0;
+  border: none;
+  background: var(--rojo-fondo);
+  color: #ffffff;
+  font: inherit;
+  font-weight: 700;
+  white-space: nowrap;
+  overflow: hidden;
+  cursor: pointer;
 }
 
-#lista-jugadores .texto-jugador {
+.accion-borrar span {
+  padding: 0 1.25rem;
+}
+
+.deslizable {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  min-height: 3.25rem;
+  padding: 0.375rem 0.5rem 0.375rem 0.75rem;
+  background: var(--carta);
+  touch-action: pan-y;
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+/* Dorsal: el número de cada jugador, como en una hoja de alineación */
+.dorsal {
+  flex: none;
+  width: 2rem;
+  font-family: var(--letra-titulo);
+  font-weight: 800;
+  font-size: 1.375rem;
+  line-height: 1;
+  color: var(--tinta-3);
+  text-align: center;
+  font-variant-numeric: tabular-nums;
+}
+
+.texto-jugador {
   flex: 1;
+  min-width: 0;
+  display: flex;
+  align-items: center;
+  gap: 0.625rem;
+}
+
+.nombre-jugador {
   min-width: 0;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
+  font-family: var(--letra-titulo);
+  font-weight: 800;
+  font-size: 1.375rem;
+  line-height: 1;
+  letter-spacing: 0.01em;
+  text-transform: uppercase;
 }
 
-.icono {
-  font: inherit;
-  cursor: pointer;
-  border: none;
+/* Nivel: 5 estrellas, las del nivel en dorado y el resto apagadas */
+.estrellas {
+  flex: none;
+  color: var(--estrella);
+  font-size: 0.875rem;
+  letter-spacing: 0.06em;
+  line-height: 1;
+}
+
+.estrellas .apagada {
+  color: var(--tinta-3);
+}
+
+/* Botoncito "POR" para marcar al portero */
+.chip-portero {
+  flex: none;
+  padding: 0.25rem 0.5rem;
+  border: 1px solid var(--linea);
+  border-radius: 0.25rem;
   background: transparent;
-  border-radius: 8px;
-  padding: 4px 8px;
-  font-size: 1.1rem;
+  color: var(--tinta-3);
+  font-family: var(--letra-ticket);
+  font-size: 0.6875rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  cursor: pointer;
+  touch-action: manipulation;
+  transition: transform 100ms ease-out, background-color 200ms ease, color 200ms ease, border-color 200ms ease;
 }
 
-/* El guante sale apagado si NO es portero */
-.icono.portero {
-  filter: grayscale(1);
-  opacity: 0.3;
+.chip-portero:active {
+  transform: scale(0.92);
 }
 
-.icono.portero[aria-pressed="true"] {
-  filter: none;
-  opacity: 1;
-  background: #fff6c2;
+.chip-portero[aria-pressed="true"] {
+  border-color: transparent;
+  background: var(--oro);
+  color: #2b2000;
 }
 
+/* Botón × (solo con ratón; en el móvil se desliza la fila) */
 .icono.borrar {
-  color: var(--texto-suave);
-  font-size: 1rem;
+  flex: none;
+  display: grid;
+  place-items: center;
+  width: 1.75rem;
+  height: 1.75rem;
+  padding: 0;
+  border: none;
+  border-radius: 50%;
+  background: transparent;
+  color: var(--tinta-3);
+  cursor: pointer;
+  transition: background-color 150ms ease, color 150ms ease, transform 100ms ease-out;
+}
+
+.icono.borrar svg {
+  width: 0.75rem;
+  height: 0.75rem;
 }
 
 .icono.borrar:hover {
-  background: #fde8e8;
-  color: #b42318;
+  background: var(--relleno);
+  color: var(--rojo);
 }
 
-/* Botón rojo para "Borrar lista": avisa de que borra cosas */
-.boton.peligro {
-  display: block;
-  margin: 12px 0 0 auto;     /* pegado a la derecha */
-  padding: 8px 14px;
-  font-size: 0.9rem;
-  background: white;
-  color: #b42318;
-  border: 2px solid #b42318;
-  box-shadow: 0 4px 0 #b42318, 0 6px 10px rgba(0, 0, 0, 0.12);
+.icono.borrar:active {
+  transform: scale(0.9);
 }
 
-.boton.peligro:hover {
-  background: #fde8e8;
-  filter: none;
+@media (hover: none) {
+  .icono.borrar {
+    display: none;
+  }
 }
 
-.boton.peligro:active {
-  box-shadow: 0 1px 0 #b42318;
+/* El jugador recién añadido "se materializa" */
+.lista li.nuevo .deslizable {
+  animation: materializar var(--rapido) var(--muelle) both;
 }
 
-.boton.peligro[hidden] {
-  display: none;             /* "hidden" debe ganar al display: block de arriba */
+@keyframes materializar {
+  from { opacity: 0; scale: 0.97; translate: 0 -0.5rem; filter: blur(4px); }
+  to { opacity: 1; scale: 1; translate: 0 0; filter: blur(0); }
 }
 
-/* ===== NOMBRES DE LOS EQUIPOS ===== */
-.nombres-equipos {
-  display: grid;
-  grid-template-columns: 1fr auto 1fr;
-  gap: 8px;
-  align-items: center;
+.lista li.colapsando {
+  transition: height 300ms var(--muelle), opacity 200ms ease;
+  opacity: 0;
 }
 
-.nombre-equipo {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  min-width: 0;
+.lista.vaciando li {
+  transition: opacity 200ms ease;
+  opacity: 0;
 }
 
-.nombre-equipo input[type="text"] {
-  flex: 1;
-  width: 100%;
-  font-weight: 600;
-}
-
-.vs {
-  font-weight: 800;
-  color: var(--texto-suave);
-}
-
-/* Selector de color redondo (la "camiseta") */
+/* ===== NOMBRES Y COLORES DE LOS EQUIPOS ===== */
 .selector-color {
   flex: none;
-  width: 38px;
-  height: 38px;
+  width: 2rem;
+  height: 2rem;
   padding: 0;
-  border: 3px solid white;
+  border: 2px solid var(--carta);
   border-radius: 50%;
   background: none;
   cursor: pointer;
-  box-shadow: 0 3px 0 #b8c7bc, 0 5px 10px rgba(0, 0, 0, 0.25);
+  box-shadow: 0 0 0 1px var(--linea);
+  transition: transform 100ms ease-out;
   -webkit-appearance: none;
   appearance: none;
+}
+
+.selector-color:active {
+  transform: scale(0.9);
 }
 
 .selector-color::-webkit-color-swatch-wrapper {
@@ -341,92 +894,148 @@ select:focus {
   border-radius: 50%;
 }
 
-/* ===== MARCADOR ===== */
+#nombre-equipo-1,
+#nombre-equipo-2 {
+  font-family: var(--letra-titulo);
+  font-size: 1.375rem;
+  font-weight: 800;
+  text-transform: uppercase;
+}
+
+.local-visitante {
+  flex: none;
+  color: var(--tinta-3);
+  font-family: var(--letra-ticket);
+  font-size: 0.6875rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+/* ===== RESULTADO ===== */
+#resultado {
+  margin-top: 1rem;
+}
+
+#resultado.barajando .jugador {
+  animation: desmaterializar 180ms ease-in forwards;
+}
+
+/* Cuando solo cambia un jugador (por la lista), no se vuelven a animar todos */
+#resultado.quieto .jugador:not(.recien) {
+  animation: none;
+}
+
+@keyframes desmaterializar {
+  to { opacity: 0; scale: 0.6; filter: blur(4px); }
+}
+
+/* ===== MARCADOR: dos bloques con los colores de los equipos ===== */
 .marcador {
   display: grid;
-  grid-template-columns: 1fr auto 1fr;
-  align-items: center;
-  gap: 8px;
-  margin-top: 22px;
-  padding: 10px 12px;
-  border-radius: 12px;
-  background: #15241a;
-  color: white;
-  box-shadow: 0 4px 0 #000, 0 10px 18px rgba(0, 0, 0, 0.3);
+  grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
+  overflow: hidden;
+  border-radius: 0.5rem;
+  background: var(--tinta);
 }
 
 .marcador .lado {
   display: flex;
   flex-direction: column;
+  gap: 0.125rem;
   min-width: 0;
+  padding: 0.75rem 0.875rem;
 }
 
-/* La pastilla de color ocupa solo lo que mide el nombre:
-   el equipo 1 se pega a la izquierda y el equipo 2 a la derecha */
 .marcador .lado.izquierda {
-  align-items: flex-start;
+  background: var(--equipo-1);
+  color: var(--texto-equipo-1);
+  text-shadow: var(--sombra-equipo-1, none);
+  animation: entrar-izquierda var(--normal) var(--muelle) both;
 }
 
 .marcador .lado.derecha {
   align-items: flex-end;
   text-align: right;
+  background: var(--equipo-2);
+  color: var(--texto-equipo-2);
+  text-shadow: var(--sombra-equipo-2, none);
+  animation: entrar-derecha var(--normal) var(--muelle) both;
 }
 
-/* Nombre del equipo dentro de una "pastilla" de su color */
+/* Cada equipo sale de su lado, como al saltar al campo */
+@keyframes entrar-izquierda {
+  from { translate: -40% 0; opacity: 0; }
+  to { translate: 0 0; opacity: 1; }
+}
+
+@keyframes entrar-derecha {
+  from { translate: 40% 0; opacity: 0; }
+  to { translate: 0 0; opacity: 1; }
+}
+
 .marcador .nombre {
   max-width: 100%;
-  padding: 2px 10px;
-  border-radius: 999px;
-  font-weight: 700;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
+  font-family: var(--letra-titulo);
+  font-weight: 900;
+  font-size: 1.625rem;
+  line-height: 1;
+  text-transform: uppercase;
 }
-
-.marcador .nombre.equipo-1 { background: var(--equipo-1); color: var(--texto-equipo-1); }
-.marcador .nombre.equipo-2 { background: var(--equipo-2); color: var(--texto-equipo-2); }
-
-.marcador .lado.izquierda .total { padding-left: 10px; }
-.marcador .lado.derecha .total { padding-right: 10px; }
 
 .marcador .total {
-  font-size: 0.8rem;
-  opacity: 0.75;
+  max-width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-family: var(--letra-ticket);
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  font-variant-numeric: tabular-nums;
 }
 
-/* ===== CAMPO 3D =====
-   "perspective" en el contenedor + "rotateX" en el campo = el campo se tumba.
-   Luego los jugadores se giran al revés para quedarse "de pie". */
+.marcador .vs {
+  display: grid;
+  place-items: center;
+  padding: 0 0.75rem;
+  color: var(--papel);
+  font-family: var(--letra-titulo);
+  font-weight: 900;
+  font-size: 1.125rem;
+  text-transform: uppercase;
+}
+
+/* ===== CAMPO 3D ===== */
 .estadio {
-  perspective: 900px;
+  perspective: 1000px;
   perspective-origin: 50% 0%;
-  padding: 18px 4px 6px;
+  padding: 1.5rem 0.25rem 0.5rem;
 }
 
 .campo {
   position: relative;
   display: flex;
   flex-direction: column;
-  min-height: 460px;
-  border: 4px solid rgba(255, 255, 255, 0.9);
-  border-radius: 6px;
-  background: repeating-linear-gradient(
-    to bottom,
-    var(--hierba-1) 0 46px,
-    var(--hierba-2) 46px 92px
-  );
+  min-height: 28rem;
+  border: 2px solid rgba(255, 255, 255, 0.85);
+  border-radius: 0.25rem;
+  /* Césped segado a rayas, con un poco de luz en el centro */
+  background:
+    radial-gradient(ellipse at 50% 45%, rgba(255, 255, 255, 0.1), transparent 65%),
+    repeating-linear-gradient(to bottom, var(--hierba-1) 0 2.875rem, var(--hierba-2) 2.875rem 5.75rem);
   transform: rotateX(var(--inclinacion));
   transform-origin: 50% 100%;
   transform-style: preserve-3d;
-  box-shadow:
-    0 0 0 6px #1d6b2c,
-    0 30px 30px rgba(0, 0, 0, 0.45);
+  box-shadow: 0 0 0 0.5rem #1a5a31, 0 1.5rem 2.5rem -1rem rgba(0, 0, 0, 0.5);
 }
 
-/* Líneas del campo (blancas) */
 .linea {
   position: absolute;
-  border: 3px solid rgba(255, 255, 255, 0.85);
+  border: 2px solid rgba(255, 255, 255, 0.75);
   pointer-events: none;
 }
 
@@ -434,12 +1043,12 @@ select:focus {
   left: 0;
   right: 0;
   top: 50%;
-  border-width: 3px 0 0;
+  border-width: 2px 0 0;
 }
 
 .linea.circulo {
-  width: 90px;
-  height: 90px;
+  width: 5.5rem;
+  height: 5.5rem;
   left: 50%;
   top: 50%;
   border-radius: 50%;
@@ -449,106 +1058,104 @@ select:focus {
 .linea.area {
   left: 25%;
   right: 25%;
-  height: 60px;
+  height: 3.75rem;
 }
 
-.linea.area.arriba { top: -3px; border-top: none; }
-.linea.area.abajo { bottom: -3px; border-bottom: none; }
+.linea.area.arriba { top: -2px; border-top: none; }
+.linea.area.abajo { bottom: -2px; border-bottom: none; }
 
-/* Porterías */
 .porteria {
   position: absolute;
   left: 38%;
   right: 38%;
-  height: 10px;
-  background: repeating-linear-gradient(90deg, #fff 0 3px, transparent 3px 7px);
-  border: 3px solid #fff;
+  height: 0.625rem;
+  background: repeating-linear-gradient(90deg, rgba(255, 255, 255, 0.75) 0 2px, transparent 2px 6px);
+  border: 2px solid #ffffff;
 }
 
-.porteria.arriba { top: -16px; border-bottom: none; }
-.porteria.abajo { bottom: -16px; border-top: none; }
+.porteria.arriba { top: -0.875rem; border-bottom: none; }
+.porteria.abajo { bottom: -0.875rem; border-top: none; }
 
-/* Cada mitad del campo es para un equipo */
 .mitad {
   position: relative;
   flex: 1;
   display: flex;
   flex-direction: column;
   justify-content: space-around;
-  padding: 10px 4px;
+  padding: 0.625rem 0.25rem;
   transform-style: preserve-3d;
 }
 
-.fila {
+.mitad .fila-campo {
   display: flex;
   justify-content: space-around;
   align-items: flex-end;
-  min-height: 62px;
+  min-height: 3.875rem;
   transform-style: preserve-3d;
 }
 
-/* ===== JUGADORES (las fichas del campo) ===== */
+/* ===== FICHAS: cada jugador lleva una camiseta de verdad ===== */
 .jugador {
   display: flex;
   flex-direction: column;
   align-items: center;
-  width: 76px;
+  width: 4.75rem;
   transform: rotateX(calc(-1 * var(--inclinacion)));
   transform-origin: 50% 100%;
-  animation: entrar 0.35s ease-out both;
+  animation: materializar-ficha var(--rapido) var(--muelle) both;
+  animation-delay: var(--retraso, 0ms);
+  /* La sombra sigue la forma de la camiseta */
+  filter: drop-shadow(0 3px 3px rgba(0, 0, 0, 0.35));
 }
 
-@keyframes entrar {
-  from { opacity: 0; translate: 0 -14px; }
-  to { opacity: 1; translate: 0 0; }
+@keyframes materializar-ficha {
+  from { opacity: 0; scale: 0.6; }
+  to { opacity: 1; scale: 1; }
 }
 
+/* La forma de camiseta se "recorta" con clip-path (un polígono) */
 .camiseta {
-  position: relative;
   display: grid;
   place-items: center;
-  width: 42px;
-  height: 42px;
-  border-radius: 50%;
-  border: 3px solid white;
-  color: white;
-  font-weight: 800;
-  font-size: 0.85rem;
-  text-shadow: 0 1px 1px rgba(0, 0, 0, 0.4);
-  box-shadow:
-    inset 0 -6px 0 rgba(0, 0, 0, 0.22),
-    inset 0 4px 0 rgba(255, 255, 255, 0.3),
-    0 6px 6px rgba(0, 0, 0, 0.45);
+  width: 2.75rem;
+  height: 2.5rem;
+  padding-top: 0.25rem;
+  clip-path: polygon(30% 0, 42% 9%, 58% 9%, 70% 0, 100% 17%, 88% 42%, 78% 36%, 78% 100%,
+    22% 100%, 22% 36%, 12% 42%, 0 17%);
+  font-family: var(--letra-titulo);
+  font-size: 0.9375rem;
+  font-weight: 900;
+  line-height: 1;
+  transition: transform 200ms var(--muelle);
 }
 
-.mitad.equipo-1 .camiseta { background: var(--equipo-1); color: var(--texto-equipo-1); }
-.mitad.equipo-2 .camiseta { background: var(--equipo-2); color: var(--texto-equipo-2); }
+.mitad.equipo-1 .camiseta { background: var(--equipo-1); color: var(--texto-equipo-1); text-shadow: var(--sombra-equipo-1, none); }
+.mitad.equipo-2 .camiseta { background: var(--equipo-2); color: var(--texto-equipo-2); text-shadow: var(--sombra-equipo-2, none); }
 
-/* El portero lleva el color de su equipo, pero con un aro dorado y el guante */
-.mitad .jugador.es-portero .camiseta {
-  border-color: var(--portero);
-  box-shadow:
-    0 0 0 3px #1b1b1b,
-    inset 0 -6px 0 rgba(0, 0, 0, 0.22),
-    inset 0 4px 0 rgba(255, 255, 255, 0.3),
-    0 6px 6px rgba(0, 0, 0, 0.45);
+/* El portero va de amarillo, con las mangas del color de su equipo */
+.mitad.equipo-1 .jugador.es-portero .camiseta {
+  background: linear-gradient(90deg, var(--equipo-1) 0 22%, #f2c230 22% 78%, var(--equipo-1) 78%);
+  color: #2b2000;
 }
 
-.guante {
-  position: absolute;
-  right: -10px;
-  top: -8px;
-  font-size: 0.95rem;
+.mitad.equipo-2 .jugador.es-portero .camiseta {
+  background: linear-gradient(90deg, var(--equipo-2) 0 22%, #f2c230 22% 78%, var(--equipo-2) 78%);
+  color: #2b2000;
+}
+
+.jugador:hover .camiseta {
+  transform: translateY(-3px);
 }
 
 .etiqueta {
-  margin-top: 4px;
-  max-width: 76px;
-  padding: 1px 7px;
-  border-radius: 999px;
-  background: rgba(0, 0, 0, 0.6);
-  color: white;
-  font-size: 0.72rem;
+  margin-top: 0.25rem;
+  max-width: 4.75rem;
+  padding: 1px 5px;
+  border-radius: 2px;
+  background: #17160f;
+  color: #f1ebdf;
+  font-size: 0.6875rem;
+  font-weight: 600;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
@@ -556,200 +1163,330 @@ select:focus {
 
 .sin-portero {
   align-self: center;
-  font-size: 0.75rem;
-  color: white;
-  background: rgba(0, 0, 0, 0.45);
   padding: 2px 8px;
-  border-radius: 999px;
+  border-radius: 2px;
+  background: rgba(0, 0, 0, 0.45);
+  color: #ffffff;
+  font-family: var(--letra-ticket);
+  font-size: 0.6875rem;
 }
 
-/* ===== FORMULARIOS DE PARTIDO Y PAGO ===== */
-.campos {
-  display: grid;
-  gap: 14px;
-}
-
-.campo-form {
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
-}
-
-.campo-form > span {
-  font-weight: 600;
-  font-size: 0.92rem;
-}
-
-.campo-form[hidden] {
-  display: none;
-}
-
-input[type="datetime-local"] {
-  font: inherit;
-  padding: 10px 12px;
-  border: 2px solid var(--borde);
-  border-radius: 10px;
-  background: white;
-}
-
-/* Interruptor de dos opciones con relieve */
-.interruptor {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 6px;
-  padding: 5px;
-  border-radius: 12px;
-  background: #e7efe9;
-  box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.12);
-}
-
-.interruptor label {
+/* ===== EL PARTIDO: con forma de entrada (talón a la izquierda) ===== */
+.entrada {
   position: relative;
-  cursor: pointer;
+  padding-left: 2.25rem;
+  border: none;
+  /* Dos "mordiscos" redondos arriba y abajo, donde se arranca el talón */
+  -webkit-mask:
+    radial-gradient(circle at 2.25rem 0, #0000 0.5rem, #000 calc(0.5rem + 0.5px)) top / 100% 51% no-repeat,
+    radial-gradient(circle at 2.25rem 100%, #0000 0.5rem, #000 calc(0.5rem + 0.5px)) bottom / 100% 51% no-repeat;
+  mask:
+    radial-gradient(circle at 2.25rem 0, #0000 0.5rem, #000 calc(0.5rem + 0.5px)) top / 100% 51% no-repeat,
+    radial-gradient(circle at 2.25rem 100%, #0000 0.5rem, #000 calc(0.5rem + 0.5px)) bottom / 100% 51% no-repeat;
 }
 
-.interruptor input {
+/* El talón: tira de color con el texto en vertical y la línea de puntos */
+.entrada-talon {
   position: absolute;
-  opacity: 0;
-  pointer-events: none;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  width: 2.25rem;
+  display: grid;
+  place-items: center;
+  border-right: 2px dashed var(--papel);
+  background: var(--cesped);
+  color: var(--cesped-texto);
+  font-family: var(--letra-ticket);
+  font-size: 0.625rem;
+  font-weight: 600;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  writing-mode: vertical-rl;
+  rotate: 180deg;
 }
 
-.interruptor span {
-  display: block;
-  height: 100%;
-  padding: 9px 8px;
-  border-radius: 9px;
-  text-align: center;
-  font-size: 0.9rem;
-  color: var(--texto-suave);
+.entrada .fila + .fila::before {
+  left: 1rem;
 }
 
-.interruptor input:checked + span {
-  background: white;
-  color: var(--verde-oscuro);
-  font-weight: 700;
-  box-shadow: 0 3px 0 #b8c7bc, 0 4px 8px rgba(0, 0, 0, 0.12);
+/* ===== LA CUENTA: un ticket de caja con el borde de abajo rasgado ===== */
+.ticket {
+  position: relative;
+  margin: 1rem auto 0;
+  max-width: 22rem;
+  padding: 1.25rem 1.25rem 1.75rem;
+  background: var(--carta);
+  font-family: var(--letra-ticket);
+  font-size: 0.875rem;
+  letter-spacing: 0;
+  rotate: -0.6deg;                         /* un pelín torcido, como si estuviera encima de la mesa */
+  filter: drop-shadow(0 6px 10px rgba(0, 0, 0, 0.12));
+  /* Dientes de sierra abajo: se recortan con una máscara */
+  -webkit-mask:
+    linear-gradient(#000 0 0) top / 100% calc(100% - 0.5rem) no-repeat,
+    conic-gradient(from -45deg at bottom, #0000, #000 1deg 89deg, #0000 90deg) bottom / 1rem 0.5rem repeat-x;
+  mask:
+    linear-gradient(#000 0 0) top / 100% calc(100% - 0.5rem) no-repeat,
+    conic-gradient(from -45deg at bottom, #0000, #000 1deg 89deg, #0000 90deg) bottom / 1rem 0.5rem repeat-x;
+  animation: imprimir var(--normal) var(--muelle) both;
 }
 
-.interruptor input:focus-visible + span {
-  outline: 2px solid var(--verde);
+/* El ticket "sale de la impresora" la primera vez que aparece */
+@keyframes imprimir {
+  from { opacity: 0; translate: 0 -1rem; }
+  to { opacity: 1; translate: 0 0; }
 }
 
-/* Caja con el resultado de cuánto paga cada uno */
-.resumen-pago {
-  margin-top: 16px;
-  padding: 14px;
-  border-radius: 12px;
-  background: #f0f8f2;
-  border: 2px dashed #a9d3b5;
-}
-
-.resumen-pago:empty {
+.ticket:empty {
   display: none;
 }
 
-.resumen-pago .cantidad {
-  font-size: 1.6rem;
-  font-weight: 800;
-  color: var(--verde-oscuro);
-}
-
-.resumen-pago p {
-  margin: 4px 0;
-}
-
-.resumen-pago ul {
-  margin: 8px 0 0;
-  padding-left: 20px;
-}
-
-.resumen-pago .aviso {
-  color: var(--texto-suave);
-}
-
-/* Botón verde WhatsApp */
-.boton.whatsapp {
-  background: var(--whatsapp);
-  box-shadow: 0 5px 0 var(--whatsapp-oscuro), 0 8px 14px rgba(0, 0, 0, 0.25);
-}
-
-.boton.whatsapp:active {
-  box-shadow: 0 1px 0 var(--whatsapp-oscuro), 0 3px 6px rgba(0, 0, 0, 0.25);
-}
-
-/* El botón de WhatsApp es un enlace: le quitamos el subrayado */
-a.boton {
+/* Cabecera del ticket */
+.ticket::before {
+  content: "PACHANGA · LA CUENTA";
   display: block;
+  margin-bottom: 0.75rem;
+  padding-bottom: 0.625rem;
+  border-bottom: 1px dashed var(--tinta-3);
+  color: var(--tinta-2);
+  font-size: 0.6875rem;
+  letter-spacing: 0.16em;
   text-align: center;
-  text-decoration: none;
 }
 
-.aviso-compartir {
-  margin: 12px 0 0;
-  padding: 10px 12px;
-  border-radius: 10px;
-  background: #fff4e5;
-  color: #8a4b00;
+.ticket .cantidad {
+  margin: 0.25rem 0;
+  font-family: var(--letra-titulo);
+  font-size: 3rem;
+  font-weight: 900;
+  line-height: 1;
+  letter-spacing: -0.01em;
+  text-transform: uppercase;
+  font-variant-numeric: tabular-nums;
+}
+
+.ticket .cantidad.cambio {
+  animation: aparecer-cifra var(--rapido) var(--muelle);
+}
+
+@keyframes aparecer-cifra {
+  from { opacity: 0.3; translate: 0 0.375rem; }
+  to { opacity: 1; translate: 0 0; }
+}
+
+.ticket p {
+  margin: 0.25rem 0;
+}
+
+.ticket .aviso-texto {
+  color: var(--tinta-2);
+}
+
+.ticket strong {
   font-weight: 600;
 }
 
-/* Vista previa del mensaje */
+.ticket ul {
+  margin: 0.75rem 0 0;
+  padding: 0.625rem 0 0;
+  border-top: 1px dashed var(--tinta-3);
+  list-style: none;
+}
+
+.ticket li {
+  padding: 0.1875rem 0;
+}
+
+/* ===== AVISAR AL GRUPO ===== */
+.aviso {
+  margin: 0.75rem 0 0;
+  padding: 0.75rem 1rem;
+  border-radius: 0.5rem;
+  background: var(--oro-suave);
+  color: var(--oro-texto);
+  font-size: 0.9375rem;
+  font-weight: 600;
+}
+
+.aviso.temblando {
+  animation: temblar 400ms ease-out;
+}
+
+@keyframes temblar {
+  0%, 100% { translate: 0 0; }
+  20% { translate: -0.5rem 0; }
+  40% { translate: 0.4rem 0; }
+  60% { translate: -0.25rem 0; }
+  80% { translate: 0.125rem 0; }
+}
+
 .vista-previa {
-  margin-top: 16px;
+  margin-top: 1rem;
 }
 
 .vista-previa summary {
-  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  min-height: 3rem;
+  padding: 0.5rem 1rem;
   font-weight: 600;
-  color: var(--verde-oscuro);
+  cursor: pointer;
+  list-style: none;
+}
+
+.vista-previa summary::-webkit-details-marker {
+  display: none;
+}
+
+.vista-previa summary::after {
+  content: "";
+  width: 0.5rem;
+  height: 0.5rem;
+  border-right: 2px solid var(--tinta-3);
+  border-bottom: 2px solid var(--tinta-3);
+  rotate: -45deg;
+  transition: rotate var(--rapido) var(--muelle);
+}
+
+.vista-previa[open] summary::after {
+  rotate: 45deg;
 }
 
 .vista-previa pre {
-  margin: 10px 0 0;
-  padding: 12px;
-  border-radius: 10px;
-  background: #e7f7dc;            /* como un mensaje de WhatsApp */
-  font-family: inherit;
-  font-size: 0.9rem;
+  margin: 0 1rem 1rem;
+  padding: 0.75rem 0.875rem;
+  border-radius: 0.875rem 0.875rem 0.875rem 0.25rem;
+  background: var(--burbuja);
+  font: inherit;
+  font-size: 0.9375rem;
   white-space: pre-wrap;
   word-break: break-word;
 }
 
-/* Las casillas de nombre de equipo llevan el color de su equipo */
-#nombre-equipo-1 {
-  border-color: var(--equipo-1);
-  box-shadow: inset 5px 0 0 var(--equipo-1);
+.vista-previa[open] pre {
+  animation: materializar var(--rapido) var(--muelle);
 }
 
-#nombre-equipo-2 {
-  border-color: var(--equipo-2);
-  box-shadow: inset 5px 0 0 var(--equipo-2);
+.firma {
+  margin: 3rem 0 0;
+  padding-top: 0.75rem;
+  border-top: 5px double var(--tinta);
+  color: var(--tinta-2);
+  font-family: var(--letra-ticket);
+  font-size: 0.6875rem;
+  letter-spacing: 0.08em;
+  text-align: center;
+  text-transform: uppercase;
 }
 
-/* Si la persona prefiere menos movimiento, quitamos animaciones */
+/* ===== AVISO FLOTANTE CON "DESHACER" ===== */
+.aviso-flotante {
+  position: fixed;
+  left: 50%;
+  bottom: calc(1rem + env(safe-area-inset-bottom));
+  z-index: 20;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  width: max-content;
+  max-width: calc(100% - 2rem);
+  padding: 0.5rem 0.5rem 0.5rem 1rem;
+  border-radius: 0.5rem;
+  background: var(--tinta);
+  color: var(--papel);
+  font-size: 0.9375rem;
+  box-shadow: 0 0.625rem 1.875rem rgba(0, 0, 0, 0.25);
+  translate: -50% 0;
+  animation: subir-aviso var(--rapido) var(--muelle) both;
+}
+
+.aviso-flotante .boton.enlace {
+  margin: 0;
+  color: var(--oro);
+  font-weight: 700;
+}
+
+@keyframes subir-aviso {
+  from { opacity: 0; translate: -50% 1rem; scale: 0.96; filter: blur(4px); }
+  to { opacity: 1; translate: -50% 0; scale: 1; filter: blur(0); }
+}
+
+.aviso-flotante.saliendo {
+  animation: bajar-aviso 200ms ease-in forwards;
+}
+
+@keyframes bajar-aviso {
+  to { opacity: 0; translate: -50% 1rem; scale: 0.96; }
+}
+
+/* ===== ACCESIBILIDAD ===== */
 @media (prefers-reduced-motion: reduce) {
-  .balon,
-  .jugador {
-    animation: none;
+  *,
+  *::before,
+  *::after {
+    animation-name: fundido !important;
+    animation-duration: 200ms !important;
+    animation-delay: 0ms !important;
+    transition-property: opacity, background-color, color !important;
+  }
+
+  .aviso-flotante.saliendo,
+  #resultado.barajando .jugador {
+    animation-name: fundido-salida !important;
+  }
+}
+
+@keyframes fundido {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes fundido-salida {
+  to { opacity: 0; }
+}
+
+@media (prefers-reduced-transparency: reduce) {
+  .barra.con-titulo {
+    background: var(--papel);
+    -webkit-backdrop-filter: none;
+    backdrop-filter: none;
+  }
+
+  body::before {
+    display: none;
+  }
+}
+
+@media (prefers-contrast: more) {
+  :root {
+    --tinta-2: var(--tinta);
+    --linea: var(--tinta-3);
+  }
+
+  body::before {
+    display: none;
   }
 }
 
 /* Móviles estrechos: fichas un poco más pequeñas */
-@media (max-width: 420px) {
-  header h1 {
-    font-size: 2.1rem;
-  }
-
+@media (max-width: 26rem) {
   .jugador {
-    width: 64px;
+    width: 4rem;
   }
 
   .etiqueta {
-    max-width: 64px;
+    max-width: 4rem;
   }
 
   .camiseta {
-    width: 36px;
-    height: 36px;
+    width: 2.5rem;
+    height: 2.25rem;
+  }
+
+  .grupo-titulo,
+  .grupo-titulo .num {
+    font-size: 1.875rem;
   }
 }
