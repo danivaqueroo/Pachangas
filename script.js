@@ -23,6 +23,11 @@ if (jugadores.some(function (j) { return !j.id; })) {
 let nombresEquipos = cargar("pachanga-nombres", ["", ""]);
 let coloresEquipos = cargar("pachanga-colores", COLORES_POR_DEFECTO.slice());
 let ultimosEquipos = cargar("pachanga-equipos", null); // los últimos equipos hechos
+// Goles del partido de ahora. "tocado" = ya se ha apuntado algún gol;
+// "guardadoId" = el partido del historial donde se guardó (para poder corregirlo)
+let marcador = cargar("pachanga-marcador", { goles: [0, 0], tocado: false, guardadoId: null });
+// Partidos jugados, el más reciente primero
+let historial = cargar("pachanga-historial", []);
 let partido = cargar("pachanga-partido", {
   fecha: "",
   lugar: "",
@@ -138,6 +143,7 @@ function colapsarFila(fila, despues) {
 botonBorrarLista.addEventListener("click", function () {
   const copiaJugadores = jugadores.slice();
   const copiaEquipos = ultimosEquipos;
+  const copiaMarcador = JSON.parse(JSON.stringify(marcador));
   const cuantos = jugadores.length;
 
   lista.classList.add("vaciando"); // todas las filas se desvanecen a la vez
@@ -148,6 +154,9 @@ botonBorrarLista.addEventListener("click", function () {
     ofrecerDeshacer("Lista borrada (" + cuantos + (cuantos === 1 ? " jugador)" : " jugadores)"), function () {
       jugadores = copiaJugadores;
       ultimosEquipos = copiaEquipos;
+      marcador = copiaMarcador;
+      guardar("pachanga-marcador", marcador);
+      pintarGoles();
       guardar("pachanga-jugadores", jugadores);
       if (ultimosEquipos) {
         guardar("pachanga-equipos", ultimosEquipos);
@@ -170,6 +179,7 @@ function vaciarLista() {
 
   resultado.hidden = true;
   botonRepartir.textContent = "Hacer equipos";
+  reiniciarMarcador();
   pintarLista();
 }
 
@@ -488,10 +498,11 @@ botonRepartir.addEventListener("click", function () {
   resultado.classList.remove("quieto"); // reparto nuevo: se animan todas las fichas
   fichasRecientes = new Set();
 
-  // Equipos nuevos = todavía no ha perdido nadie
+  // Equipos nuevos = todavía no ha perdido nadie y el marcador vuelve a 0-0
   partido.perdedor = "";
   campoPerdedor.value = "";
   guardar("pachanga-partido", partido);
+  reiniciarMarcador();
 
   vibrar(10); // pequeña vibración: "¡hecho!" (solo en móviles que la tienen)
 
@@ -894,6 +905,12 @@ function construirMensaje() {
         texto += "- " + jugador.nombre + (jugador.portero ? " 🧤" : "") + "\n";
       }
     });
+
+    // Si ya se han apuntado goles, el resultado también va en el mensaje
+    if (marcador.tocado) {
+      texto += "\n🏁 *Resultado: " + nombreEquipo(1) + " " + marcador.goles[0] +
+        " - " + marcador.goles[1] + " " + nombreEquipo(2) + "*\n";
+    }
   }
 
   const pago = calcularPago();
@@ -983,6 +1000,282 @@ function cargar(clave, valorSiNoHay) {
   } catch (error) {
     return valorSiNoHay;
   }
+}
+
+
+// =====================================================
+// 9b. RESULTADO, HISTORIAL Y CLASIFICACIÓN
+// Apuntas los goles en el marcador, guardas el partido y con todos los
+// partidos guardados se hace una clasificación de jugadores, como en la liga.
+// =====================================================
+const golesNum = [$("goles-1"), $("goles-2")];
+const botonGuardarResultado = $("boton-guardar-resultado");
+const cajaHistorial = $("historial");
+const historialVacio = $("historial-vacio");
+const bloqueClasificacion = $("bloque-clasificacion");
+const cuerpoClasificacion = $("clasificacion");
+let partidoNuevo = null; // id del partido recién guardado (solo ese entra animado)
+
+// Atajo para crear una etiqueta HTML con clase y texto
+function crear(etiqueta, clase, texto) {
+  const el = document.createElement(etiqueta);
+  if (clase) el.className = clase;
+  if (texto !== undefined) el.textContent = texto;
+  return el;
+}
+
+// Botones "+ Gol" y "−" de cada equipo
+document.querySelectorAll(".controles-goles .boton").forEach(function (boton) {
+  boton.addEventListener("click", function () {
+    const i = Number(boton.dataset.equipo) - 1;   // equipo 1 → posición 0
+    const cambio = Number(boton.dataset.cambio);  // +1 o -1
+    const antes = marcador.goles[i];
+    marcador.goles[i] = Math.max(0, antes + cambio); // no se puede bajar de 0
+    if (marcador.goles[i] === antes) return;
+    marcador.tocado = true;
+    guardar("pachanga-marcador", marcador);
+    pintarGoles();
+    if (cambio > 0) {
+      reanimar(golesNum[i], "gol"); // el número "cae" en su sitio
+      vibrar(15);
+    }
+    ponerPerdedorSegunGoles();
+    pintarPago(); // cambia "La cuenta" y el mensaje de WhatsApp
+  });
+});
+
+function reiniciarMarcador() {
+  marcador = { goles: [0, 0], tocado: false, guardadoId: null };
+  guardar("pachanga-marcador", marcador);
+  pintarGoles();
+}
+
+// "Ha perdido" (en La cuenta) se rellena solo con el resultado
+function ponerPerdedorSegunGoles() {
+  const g1 = marcador.goles[0];
+  const g2 = marcador.goles[1];
+  partido.perdedor = g1 > g2 ? "2" : g1 < g2 ? "1" : "empate";
+  campoPerdedor.value = partido.perdedor;
+  guardar("pachanga-partido", partido);
+}
+
+// El partido guardado que corresponde al marcador de ahora (si lo hay)
+function partidoDelMarcador() {
+  return historial.find(function (p) { return p.id === marcador.guardadoId; });
+}
+
+function pintarGoles() {
+  golesNum[0].textContent = marcador.goles[0];
+  golesNum[1].textContent = marcador.goles[1];
+
+  // El botón dice si hay que guardar, actualizar o si ya está guardado
+  const guardado = partidoDelMarcador();
+  const igual = Boolean(guardado) &&
+    guardado.goles[0] === marcador.goles[0] && guardado.goles[1] === marcador.goles[1];
+  botonGuardarResultado.classList.toggle("hecho", igual);
+  botonGuardarResultado.textContent = igual
+    ? "Guardado en el historial ✓"
+    : guardado ? "Actualizar resultado" : "Guardar resultado";
+}
+
+botonGuardarResultado.addEventListener("click", function () {
+  if (!ultimosEquipos) return;
+  const existente = partidoDelMarcador();
+  if (botonGuardarResultado.classList.contains("hecho")) return; // ya está guardado así
+
+  const copiaHistorial = JSON.parse(JSON.stringify(historial));
+  const copiaGuardadoId = marcador.guardadoId;
+
+  // Una "foto" del partido: así no cambia aunque luego cambies la lista
+  const entrada = {
+    id: existente ? existente.id : nuevoId(),
+    fecha: partido.fecha || fechaDeAhora(),
+    lugar: partido.lugar.trim(),
+    goles: marcador.goles.slice(),
+    equipos: ultimosEquipos.map(function (equipo, i) {
+      return {
+        nombre: nombreEquipo(i + 1),
+        color: coloresEquipos[i],
+        jugadores: equipo.jugadores.map(function (j) {
+          return { nombre: j.nombre, portero: Boolean(j.portero) };
+        }),
+      };
+    }),
+  };
+
+  if (existente) {
+    historial[historial.indexOf(existente)] = entrada; // corrige el que ya estaba
+  } else {
+    historial.unshift(entrada);                        // el nuevo, el primero
+    partidoNuevo = entrada.id;
+  }
+  marcador.guardadoId = entrada.id;
+  marcador.tocado = true;
+  guardar("pachanga-historial", historial);
+  guardar("pachanga-marcador", marcador);
+  pintarGoles();
+  pintarHistorial();
+  vibrar(20);
+
+  ofrecerDeshacer(existente ? "Resultado actualizado" : "Partido guardado en el historial", function () {
+    historial = copiaHistorial;
+    marcador.guardadoId = copiaGuardadoId;
+    guardar("pachanga-historial", historial);
+    guardar("pachanga-marcador", marcador);
+    pintarGoles();
+    pintarHistorial();
+  });
+});
+
+// La fecha y hora de ahora, en el mismo formato que la casilla "Día y hora"
+function fechaDeAhora() {
+  const ahora = new Date();
+  ahora.setMinutes(ahora.getMinutes() - ahora.getTimezoneOffset()); // hora de aquí, no la de Londres
+  return ahora.toISOString().slice(0, 16);
+}
+
+// "2026-11-22T18:00" → "sáb 22 nov · 18:00"
+function fechaCorta(valor) {
+  const fecha = new Date(valor);
+  if (isNaN(fecha)) return "";
+  const dia = fecha.toLocaleDateString("es-ES", { weekday: "short", day: "numeric", month: "short" });
+  const hora = fecha.toLocaleTimeString("es-ES", { hour: "2-digit", minute: "2-digit" });
+  return dia.replace(/,/g, "") + " · " + hora;
+}
+
+function pintarHistorial() {
+  cajaHistorial.innerHTML = "";
+  historialVacio.hidden = historial.length > 0;
+
+  // Del más reciente al más antiguo (por la fecha del partido)
+  const ordenados = historial.slice().sort(function (a, b) {
+    return b.fecha.localeCompare(a.fecha);
+  });
+  for (const p of ordenados) cajaHistorial.append(crearTarjetaPartido(p));
+  partidoNuevo = null;
+
+  pintarClasificacion();
+}
+
+// Cada partido es un <details>: se ve el resultado y, al tocarlo, las alineaciones
+function crearTarjetaPartido(p) {
+  const tarjeta = crear("details", "tarjeta partido-guardado" + (p.id === partidoNuevo ? " nuevo" : ""));
+  const resumen = crear("summary");
+  const g1 = p.goles[0];
+  const g2 = p.goles[1];
+
+  const cuando = crear("div", "cuando");
+  cuando.append(crear("span", "", fechaCorta(p.fecha)), crear("span", "", p.lugar));
+
+  const lado = function (i) {
+    const perdio = i === 0 ? g1 < g2 : g2 < g1;
+    const caja = crear("div", "equipo " + (i === 0 ? "izquierda" : "derecha") + (perdio ? " perdio" : ""));
+    const color = crear("span", "color");
+    color.style.background = p.equipos[i].color;
+    caja.append(color, crear("span", "", p.equipos[i].nombre));
+    return caja;
+  };
+
+  const tanteo = crear("span", "tanteo", g1 + " – " + g2);
+  tanteo.setAttribute("aria-label", g1 + " a " + g2);
+  resumen.append(cuando, lado(0), tanteo, lado(1));
+
+  // Las dos alineaciones (porteros primero)
+  const alineaciones = crear("div", "alineaciones");
+  p.equipos.forEach(function (equipo) {
+    const ul = crear("ul");
+    const ordenados = equipo.jugadores.slice().sort(function (a, b) {
+      return Number(b.portero) - Number(a.portero);
+    });
+    for (const j of ordenados) {
+      const li = crear("li", "", j.nombre);
+      if (j.portero) li.append(crear("span", "por", "POR"));
+      ul.append(li);
+    }
+    alineaciones.append(ul);
+  });
+
+  const pie = crear("div", "pie-partido");
+  const borrar = crear("button", "boton enlace peligro", "Borrar partido");
+  borrar.type = "button";
+  borrar.addEventListener("click", function () {
+    borrarPartido(p.id, tarjeta);
+  });
+  pie.append(borrar);
+
+  tarjeta.append(resumen, alineaciones, pie);
+  return tarjeta;
+}
+
+function borrarPartido(id, tarjeta) {
+  colapsarFila(tarjeta, function () {
+    const posicion = historial.findIndex(function (p) { return p.id === id; });
+    if (posicion < 0) return;
+    const quitado = historial.splice(posicion, 1)[0];
+    const eraElDeAhora = marcador.guardadoId === id;
+    if (eraElDeAhora) marcador.guardadoId = null;
+    guardar("pachanga-historial", historial);
+    guardar("pachanga-marcador", marcador);
+    pintarGoles();
+    pintarHistorial();
+
+    ofrecerDeshacer("Partido borrado del historial", function () {
+      historial.splice(posicion, 0, quitado);
+      if (eraElDeAhora) marcador.guardadoId = id;
+      guardar("pachanga-historial", historial);
+      guardar("pachanga-marcador", marcador);
+      pintarGoles();
+      pintarHistorial();
+    });
+  });
+}
+
+// Clasificación: se suman los partidos de cada jugador (se le reconoce por el nombre)
+function pintarClasificacion() {
+  const tabla = new Map();
+  for (const p of historial) {
+    p.equipos.forEach(function (equipo, i) {
+      const mios = p.goles[i];
+      const suyos = p.goles[1 - i];
+      const resultado = mios > suyos ? "G" : mios < suyos ? "P" : "E";
+      for (const j of equipo.jugadores) {
+        const clave = j.nombre.trim().toLowerCase(); // "Dani" y "dani" son el mismo
+        if (!tabla.has(clave)) tabla.set(clave, { nombre: j.nombre.trim(), PJ: 0, G: 0, E: 0, P: 0 });
+        const fila = tabla.get(clave);
+        fila.PJ++;
+        fila[resultado]++;
+      }
+    });
+  }
+
+  const filas = Array.from(tabla.values());
+  filas.forEach(function (f) { f.pts = f.G * 3 + f.E; });
+  // Más puntos arriba; si empatan, más victorias; luego menos partidos jugados
+  filas.sort(function (a, b) {
+    return b.pts - a.pts || b.G - a.G || a.PJ - b.PJ || a.nombre.localeCompare(b.nombre, "es");
+  });
+
+  bloqueClasificacion.hidden = filas.length === 0;
+  cuerpoClasificacion.innerHTML = "";
+  let puesto = 0;
+  let puntosAnteriores = null;
+  filas.forEach(function (f, i) {
+    if (f.pts !== puntosAnteriores) {   // con los mismos puntos, el mismo puesto
+      puesto = i + 1;
+      puntosAnteriores = f.pts;
+    }
+    const tr = crear("tr", puesto === 1 && f.pts > 0 ? "lider" : "");
+    tr.append(
+      crear("td", "pos", String(puesto)),
+      crear("td", "jugador-col", f.nombre),
+      crear("td", "", String(f.PJ)),
+      crear("td", "", String(f.G)),
+      crear("td", "", String(f.E)),
+      crear("td", "", String(f.P)),
+      crear("td", "pts", String(f.pts))
+    );
+    cuerpoClasificacion.append(tr);
+  });
 }
 
 
@@ -1339,3 +1632,5 @@ aplicarColores();
 actualizarNombres();
 pintarLista();
 if (ultimosEquipos) pintarEquipos();
+pintarGoles();
+pintarHistorial();

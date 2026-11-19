@@ -940,10 +940,45 @@ select.campo-limpio option {
 
 .marcador .lado {
   display: flex;
+  align-items: center;
+  gap: 0.625rem;
+  min-width: 0;
+  padding: 0.75rem 0.875rem;
+}
+
+/* Nombre y nivel, uno encima del otro */
+.marcador .info {
+  flex: 1;
+  display: flex;
   flex-direction: column;
   gap: 0.125rem;
   min-width: 0;
-  padding: 0.75rem 0.875rem;
+}
+
+.marcador .lado.derecha .info {
+  align-items: flex-end;
+}
+
+/* Los goles, grandes como en la tele */
+.goles-num {
+  flex: none;
+  min-width: 1.5ch;
+  font-family: var(--letra-titulo);
+  font-weight: 900;
+  font-size: 2.75rem;
+  line-height: 0.9;
+  text-align: center;
+  font-variant-numeric: tabular-nums;
+}
+
+/* Al marcar, el número nuevo "cae" en su sitio */
+.goles-num.gol {
+  animation: marcar-gol var(--rapido) var(--muelle);
+}
+
+@keyframes marcar-gol {
+  from { translate: 0 -60%; opacity: 0; scale: 1.3; }
+  to { translate: 0 0; opacity: 1; scale: 1; }
 }
 
 .marcador .lado.izquierda {
@@ -954,7 +989,6 @@ select.campo-limpio option {
 }
 
 .marcador .lado.derecha {
-  align-items: flex-end;
   text-align: right;
   background: var(--equipo-2);
   color: var(--texto-equipo-2);
@@ -1296,6 +1330,277 @@ select.campo-limpio option {
 
 .ticket li {
   padding: 0.1875rem 0;
+}
+
+/* ===== BOTONES DE GOLES ===== */
+.controles-goles {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.75rem;
+  margin-top: 0.75rem;
+}
+
+.stepper {
+  display: grid;
+  grid-template-columns: 3rem 1fr;
+  gap: 0.375rem;
+}
+
+.stepper:last-child {
+  grid-template-columns: 1fr 3rem;
+}
+
+.stepper .boton {
+  min-height: 2.75rem;
+  padding: 0.5rem;
+  font-family: var(--letra-titulo);
+  font-size: 1.25rem;
+  font-weight: 800;
+  text-transform: uppercase;
+}
+
+.stepper .gol-menos {
+  font-size: 1.5rem;
+  line-height: 1;
+}
+
+#boton-guardar-resultado.hecho {
+  background: var(--relleno);
+  color: var(--tinta-2);
+}
+
+/* ===== HISTORIAL ===== */
+.historial {
+  display: grid;
+  gap: 0.625rem;
+}
+
+.historial:empty {
+  display: none;
+}
+
+.partido-guardado summary {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.75rem 1rem 0.5rem;
+  cursor: pointer;
+  list-style: none;
+}
+
+.partido-guardado summary::-webkit-details-marker {
+  display: none;
+}
+
+/* Fecha y lugar, en letra de ticket, encima del resultado */
+.partido-guardado .cuando {
+  grid-column: 1 / -1;
+  display: flex;
+  justify-content: space-between;
+  gap: 0.75rem;
+  color: var(--tinta-2);
+  font-family: var(--letra-ticket);
+  font-size: 0.6875rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.partido-guardado .cuando span:last-child {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.partido-guardado .equipo {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  min-width: 0;
+  font-family: var(--letra-titulo);
+  font-weight: 800;
+  font-size: 1.25rem;
+  line-height: 1.1;
+  text-transform: uppercase;
+}
+
+.partido-guardado .equipo span {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.partido-guardado .equipo.derecha {
+  flex-direction: row-reverse;
+  text-align: right;
+}
+
+/* Puntito con el color del equipo */
+.partido-guardado .color {
+  flex: none;
+  width: 0.75rem;
+  height: 0.75rem;
+  border-radius: 50%;
+  box-shadow: 0 0 0 1px var(--linea-fuerte);
+}
+
+.partido-guardado .equipo.perdio {
+  color: var(--tinta-2);
+}
+
+.partido-guardado .tanteo {
+  padding: 0.125rem 0.625rem;
+  border-radius: 0.25rem;
+  background: var(--tinta);
+  color: var(--papel);
+  font-family: var(--letra-titulo);
+  font-weight: 900;
+  font-size: 1.5rem;
+  line-height: 1.1;
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+
+/* Al abrir un partido: las dos alineaciones */
+.partido-guardado .alineaciones {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.75rem;
+  margin: 0 1rem;
+  padding: 0.75rem 0;
+  border-top: 1px dashed var(--linea-fuerte);
+  font-size: 0.9375rem;
+}
+
+.partido-guardado[open] .alineaciones {
+  animation: materializar var(--rapido) var(--muelle);
+}
+
+.partido-guardado .alineaciones ul {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.partido-guardado .alineaciones li {
+  padding: 0.125rem 0;
+}
+
+.partido-guardado .alineaciones ul:last-child {
+  text-align: right;
+}
+
+.partido-guardado .por {
+  margin-left: 0.375rem;
+  padding: 0 0.25rem;
+  border-radius: 0.1875rem;
+  background: var(--oro);
+  color: #2b2000;
+  font-family: var(--letra-ticket);
+  font-size: 0.625rem;
+  font-weight: 600;
+}
+
+.partido-guardado .pie-partido {
+  display: flex;
+  justify-content: flex-end;
+  padding: 0 0.5rem 0.5rem;
+}
+
+/* Partido recién guardado: aparece igual que un jugador nuevo */
+.partido-guardado.nuevo {
+  animation: materializar var(--rapido) var(--muelle) both;
+}
+
+.partido-guardado.colapsando {
+  transition: height 300ms var(--muelle), opacity 200ms ease, margin 300ms var(--muelle);
+  opacity: 0;
+  overflow: hidden;
+}
+
+/* ===== CLASIFICACIÓN ===== */
+.subtitulo-seccion {
+  margin: 1.75rem 0 0.625rem;
+  font-family: var(--letra-titulo);
+  font-weight: 900;
+  font-size: 1.5rem;
+  line-height: 1;
+  text-transform: uppercase;
+}
+
+.tabla-envoltorio {
+  overflow-x: auto;
+}
+
+.clasificacion {
+  width: 100%;
+  border-collapse: collapse;
+  font-variant-numeric: tabular-nums;
+}
+
+.clasificacion th {
+  padding: 0.625rem 0.5rem 0.5rem;
+  border-bottom: 2px solid var(--tinta);
+  color: var(--tinta-2);
+  font-family: var(--letra-ticket);
+  font-size: 0.6875rem;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-align: center;
+  text-transform: uppercase;
+}
+
+.clasificacion td {
+  padding: 0.5rem;
+  border-bottom: 1px dashed var(--linea);
+  text-align: center;
+  font-size: 0.9375rem;
+}
+
+.clasificacion tr:last-child td {
+  border-bottom: none;
+}
+
+.clasificacion .pos {
+  width: 2rem;
+  color: var(--tinta-2);
+  font-family: var(--letra-titulo);
+  font-weight: 800;
+  font-size: 1.125rem;
+}
+
+.clasificacion .jugador-col {
+  text-align: left;
+  font-family: var(--letra-titulo);
+  font-weight: 800;
+  font-size: 1.125rem;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+th.jugador-col {
+  font-family: var(--letra-ticket);
+  font-size: 0.6875rem;
+  font-weight: 600;
+}
+
+.clasificacion .pts {
+  font-weight: 700;
+}
+
+td.pts {
+  font-family: var(--letra-titulo);
+  font-size: 1.25rem;
+  font-weight: 900;
+}
+
+/* El líder, con fondo dorado suave */
+.clasificacion tr.lider td {
+  background: var(--oro-suave);
+}
+
+.clasificacion tr.lider .pos {
+  color: var(--oro-texto);
 }
 
 /* ===== AVISAR AL GRUPO ===== */

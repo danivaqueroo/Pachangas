@@ -17,9 +17,9 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Big+Shoulders+Display:wght@700;800;900&family=Instrument+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;600&display=swap">
   <!-- Aquí conectamos el archivo de estilos (colores, tamaños, etc.)
-       El "?v=12" es el número de versión: al subirlo, el navegador
+       El "?v=13" es el número de versión: al subirlo, el navegador
        sabe que tiene que descargar el archivo nuevo y no usar uno viejo. -->
-  <link rel="stylesheet" href="style.css?v=12">
+  <link rel="stylesheet" href="style.css?v=13">
   <script>
     // Antes de pintar nada: si la persona ya eligió tema, lo ponemos ya
     // (así la página no "parpadea" en el color equivocado al abrirse)
@@ -102,17 +102,38 @@
 
       <!-- Aquí aparecen los equipos (oculto hasta que se repartan) -->
       <div id="resultado" hidden>
+        <!-- Marcador como el de la tele: nombre, nivel y goles de cada equipo -->
         <div class="marcador">
           <div class="lado izquierda">
-            <span class="nombre equipo-1" id="marcador-nombre-1"></span>
-            <span class="total" id="marcador-total-1"></span>
+            <div class="info">
+              <span class="nombre equipo-1" id="marcador-nombre-1"></span>
+              <span class="total" id="marcador-total-1"></span>
+            </div>
+            <span class="goles-num" id="goles-1" aria-live="polite">0</span>
           </div>
           <span class="vs">vs</span>
           <div class="lado derecha">
-            <span class="nombre equipo-2" id="marcador-nombre-2"></span>
-            <span class="total" id="marcador-total-2"></span>
+            <span class="goles-num" id="goles-2" aria-live="polite">0</span>
+            <div class="info">
+              <span class="nombre equipo-2" id="marcador-nombre-2"></span>
+              <span class="total" id="marcador-total-2"></span>
+            </div>
           </div>
         </div>
+
+        <!-- Botones para apuntar los goles de cada equipo -->
+        <div class="controles-goles">
+          <div class="stepper">
+            <button type="button" class="boton gris gol-menos" data-equipo="1" data-cambio="-1" aria-label="Quitar un gol al equipo 1">−</button>
+            <button type="button" class="boton gris gol-mas" data-equipo="1" data-cambio="1" aria-label="Gol del equipo 1">+ Gol</button>
+          </div>
+          <div class="stepper">
+            <button type="button" class="boton gris gol-mas" data-equipo="2" data-cambio="1" aria-label="Gol del equipo 2">+ Gol</button>
+            <button type="button" class="boton gris gol-menos" data-equipo="2" data-cambio="-1" aria-label="Quitar un gol al equipo 2">−</button>
+          </div>
+        </div>
+        <button id="boton-guardar-resultado" class="boton verde grande" type="button">Guardar resultado</button>
+        <p class="pista">Cuando acabéis, apunta los goles y guarda el partido en el historial (apartado 06).</p>
 
         <!-- El campo en 3D -->
         <div class="estadio">
@@ -222,6 +243,34 @@
       </details>
     </section>
 
+    <!-- ===== Bloque 6: historial y clasificación ===== -->
+    <section class="grupo">
+      <h2 class="grupo-titulo"><span class="num">06</span>Historial</h2>
+      <p id="historial-vacio" class="pista">Todavía no hay partidos guardados. Cuando acabéis, apunta los goles en el marcador y pulsa «Guardar resultado».</p>
+      <div id="historial" class="historial"></div>
+
+      <div id="bloque-clasificacion" hidden>
+        <h3 class="subtitulo-seccion">Clasificación</h3>
+        <div class="tarjeta tabla-envoltorio">
+          <table class="clasificacion">
+            <thead>
+              <tr>
+                <th scope="col" class="pos">#</th>
+                <th scope="col" class="jugador-col">Jugador</th>
+                <th scope="col" title="Partidos jugados">PJ</th>
+                <th scope="col" title="Ganados">G</th>
+                <th scope="col" title="Empatados">E</th>
+                <th scope="col" title="Perdidos">P</th>
+                <th scope="col" title="Puntos: 3 por victoria, 1 por empate" class="pts">Pts</th>
+              </tr>
+            </thead>
+            <tbody id="clasificacion"></tbody>
+          </table>
+        </div>
+        <p class="pista">3 puntos por victoria y 1 por empate, como en la liga.</p>
+      </div>
+    </section>
+
     <p class="firma">Hecho para las pachangas de los jueves (y de cualquier día).</p>
   </main>
 
@@ -232,6 +281,6 @@
   </div>
 
   <!-- Aquí conectamos el archivo con la lógica (lo que hace cosas) -->
-  <script src="script.js?v=12"></script>
+  <script src="script.js?v=13"></script>
 </body>
 </html>
