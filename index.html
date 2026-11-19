@@ -6,9 +6,9 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Pachanga: generador de equipos</title>
   <!-- Aquí conectamos el archivo de estilos (colores, tamaños, etc.)
-       El "?v=6" es el número de versión: al subirlo, el navegador
+       El "?v=8" es el número de versión: al subirlo, el navegador
        sabe que tiene que descargar el archivo nuevo y no usar uno viejo. -->
-  <link rel="stylesheet" href="style.css?v=7">
+  <link rel="stylesheet" href="style.css?v=8">
 </head>
 <body>
   <!-- El "cuerpo": todo lo que se ve en pantalla -->
@@ -41,6 +41,8 @@
 
       <ul id="lista-jugadores"></ul>
       <p id="contador" class="pista"></p>
+      <!-- Vacía la lista de golpe (solo se ve si hay jugadores) -->
+      <button id="boton-borrar-lista" class="boton peligro" type="button" hidden>🗑️ Borrar lista</button>
     </section>
 
     <!-- ===== Bloque 2: hacer los equipos ===== -->
@@ -181,6 +183,6 @@
   </main>
 
   <!-- Aquí conectamos el archivo con la lógica (lo que hace cosas) -->
-  <script src="script.js?v=7"></script>
+  <script src="script.js?v=8"></script>
 </body>
 </html>

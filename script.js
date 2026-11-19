@@ -40,6 +40,7 @@ const campoPortero = $("es-portero");
 const lista = $("lista-jugadores");
 const contador = $("contador");
 const listaNombres = $("nombres-jugadores");
+const botonBorrarLista = $("boton-borrar-lista");
 
 const inputsNombre = [$("nombre-equipo-1"), $("nombre-equipo-2")];
 const inputsColor = [$("color-equipo-1"), $("color-equipo-2")];
@@ -89,6 +90,28 @@ function borrarJugador(posicion) {
   pintarLista();
 }
 
+// Borrar toda la lista de golpe (para empezar una pachanga nueva).
+// También quita los equipos hechos, porque eran con esos jugadores.
+// El nombre, color, fecha y lugar se quedan: suelen repetirse.
+botonBorrarLista.addEventListener("click", function () {
+  const seguro = confirm("¿Borrar los " + jugadores.length + " jugadores de la lista?");
+  if (!seguro) return; // si pulsa "Cancelar", no hacemos nada
+
+  jugadores = [];
+  ultimosEquipos = null;
+  try {
+    localStorage.removeItem("pachanga-jugadores"); // removeItem = olvida ese dato
+    localStorage.removeItem("pachanga-equipos");
+  } catch (error) {
+    // Si el navegador no deja guardar, tampoco hay nada que borrar
+  }
+
+  resultado.hidden = true;
+  botonRepartir.textContent = "Hacer equipos";
+  pintarLista();
+  actualizarCompartir();
+});
+
 // Pulsar el guante 🧤 convierte a un jugador en portero (o al revés)
 function cambiarPortero(posicion) {
   jugadores[posicion].portero = !jugadores[posicion].portero; // "!" = lo contrario
@@ -135,6 +158,8 @@ function pintarLista() {
   });
 
   const numPorteros = jugadores.filter(function (j) { return j.portero; }).length;
+
+  botonBorrarLista.hidden = jugadores.length === 0; // sin jugadores, no hace falta
 
   if (jugadores.length === 0) {
     contador.textContent = "Todavía no hay jugadores. ¡Añade el primero!";

@@ -261,6 +261,31 @@ select:focus {
   color: #b42318;
 }
 
+/* Botón rojo para "Borrar lista": avisa de que borra cosas */
+.boton.peligro {
+  display: block;
+  margin: 12px 0 0 auto;     /* pegado a la derecha */
+  padding: 8px 14px;
+  font-size: 0.9rem;
+  background: white;
+  color: #b42318;
+  border: 2px solid #b42318;
+  box-shadow: 0 4px 0 #b42318, 0 6px 10px rgba(0, 0, 0, 0.12);
+}
+
+.boton.peligro:hover {
+  background: #fde8e8;
+  filter: none;
+}
+
+.boton.peligro:active {
+  box-shadow: 0 1px 0 #b42318;
+}
+
+.boton.peligro[hidden] {
+  display: none;             /* "hidden" debe ganar al display: block de arriba */
+}
+
 /* ===== NOMBRES DE LOS EQUIPOS ===== */
 .nombres-equipos {
   display: grid;
